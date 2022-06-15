@@ -1,23 +1,22 @@
-## A playground of shaders based on Phlox(and PIXI.js)
+## A shader and PIXI.js tool for rendering Kaleidoscopes
 
-Demo https://r.tiye.me/Phlox-GL/shader-kneading/
+Demo https://r.tiye.me/Phlox-GL/shader-kaleidoscope/
 
-- allow input image in kaleidoscope https://r.tiye.me/Phlox-GL/shader-kneading/?image=input
+Output videos https://www.bilibili.com/video/BV1XY4y1G7yK?spm_id_from=333.999.0.0
 
-### Usage
+### Usages
 
-```bash
-yarn
-cr --emit-js -1
-yarn vite
-```
+- Mouse Drag on point to move the shift position of image
+- Mouse Drag on buttons to change: image scale, divide angles, radius of visible area for texture
+- Click to upload a squared image as the texture
+- Shift + Mouse Drag, to move canvas
+- Shift + Wheel, to zoom in/out
 
 ### Resource
 
-for Kaleidoscepe:
+default images:
 
-- background image https://www.pinterest.com/pin/5981411997407646/
-- bg alternative https://www.pinterest.com/pin/255860822571687971/
+- https://www.pinterest.com/pin/5981411997407646/
 
 ### Workflow
 
