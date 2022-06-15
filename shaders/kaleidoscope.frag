@@ -7,6 +7,8 @@ uniform vec2 shift;
 uniform float scale;
 uniform float parts;
 uniform float radius;
+uniform float rotate;
+uniform float regress;
 
 varying vec2 vUvs;
 
@@ -43,9 +45,14 @@ bool is_outside_line(vec2 p, vec2 p1, vec2 p2) {
     return product(p, conjugate(perp)).x / (l*l) > 1.0;
 }
 
+vec2 rotate_by_radian(vec2 p, float a) {
+    vec2 rot = vec2(cos(a), sin(a));
+    return product(p, rot);
+}
+
 vec2 reflection_line(vec2 p, vec2 p1, vec2 p2) {
     vec2 perp = perpendicular(p, p1, p2);
-    return perp + (perp - p)*1.22;
+    return rotate_by_radian(perp + (perp - p)*regress, rotate * length(p));
 }
 
 void main() {
