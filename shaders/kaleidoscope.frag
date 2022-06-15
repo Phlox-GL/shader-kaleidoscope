@@ -7,8 +7,11 @@ uniform vec2 shift;
 uniform float scale;
 uniform float parts;
 uniform float radius;
-uniform float rotate;
+// rotate of position factors its arm to origin point
+uniform float toss;
 uniform float regress;
+// spin of background image
+uniform float spin;
 
 varying vec2 vUvs;
 
@@ -52,7 +55,7 @@ vec2 rotate_by_radian(vec2 p, float a) {
 
 vec2 reflection_line(vec2 p, vec2 p1, vec2 p2) {
     vec2 perp = perpendicular(p, p1, p2);
-    return rotate_by_radian(perp + (perp - p)*regress, rotate * length(p));
+    return rotate_by_radian(perp + (perp - p)*regress, toss * length(p));
 }
 
 void main() {
@@ -98,7 +101,9 @@ void main() {
             continue;
         } else {
             // if (fract(at_part * 0.5) < 0.5) {
-                gl_FragColor = texture2D(colorTexture, fract((color_point - shift) * scale));
+            vec2 spin_rot = vec2(cos(spin), sin(spin));
+            color_point = product((color_point / scale), spin_rot);
+            gl_FragColor = texture2D(colorTexture, fract(color_point - shift));
             // } else {
             //     gl_FragColor = texture2D(color2Texture, fract((color_point - shift) * scale));
             // }

@@ -37,6 +37,8 @@
                     :radius 0.8
                     :regress 1
                     :rotate 0
+                    :spin 0
+                    :spin-position $ [] 200 100
                 shift $ :shift state
               group ({})
                 mesh $ {}
@@ -66,7 +68,8 @@
                     :parts $ :parts state
                     :radius $ :radius state
                     :regress $ :regress state
-                    :rotate $ :rotate state
+                    :toss $ :toss state
+                    :spin $ :spin state
                 group
                   {} $ :position ([] 520 0)
                   comp-drag-point (>> states :p3)
@@ -78,7 +81,7 @@
                       :on-change $ fn (position d!)
                         d! cursor $ assoc state :shift position
                   comp-slider (>> states :scale)
-                    {} (:title "\"scale") (:unit 0.01) (:min 0.001) (:max 4.0)
+                    {} (:title "\"scale") (:unit 0.01) (:min 0.2) (:max 5.0)
                       :position $ [] 0 -300
                       :fill $ hslx 50 90 70
                       :color $ hslx 200 90 30
@@ -109,14 +112,24 @@
                       :value $ :regress state
                       :on-change $ fn (value d!)
                         d! cursor $ assoc state :regress value
-                  comp-slider (>> states :rotate)
-                    {} (:title "\"rotate") (:unit 0.01) (:min 0) (:max 2)
+                  comp-slider (>> states :toss)
+                    {} (:title "\"toss") (:unit 0.01) (:min 0) (:max 2)
                       :position $ [] 0 -60
                       :fill $ hslx 50 90 40
                       :color $ hslx 200 60 90
-                      :value $ :rotate state
+                      :value $ :toss state
                       :on-change $ fn (value d!)
-                        d! cursor $ assoc state :rotate value
+                        d! cursor $ assoc state :toss value
+                  comp-spin-slider (>> states :spin)
+                    {} (:unit 1) (:min 0) (:max nil) (:fraction 1)
+                      :position $ :spin-position state
+                      :fill $ hslx 50 90 70
+                      :color $ hslx 200 90 30
+                      :value $ :spin state
+                      :on-change $ fn (value d!)
+                        d! cursor $ assoc state :spin value
+                      :on-move $ fn (pos d!)
+                        d! cursor $ assoc state :spin-position pos
         |file-image $ quote
           def file-image $ let
               img $ new js/Image
@@ -145,7 +158,7 @@
           phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh group
           phlox.comp.button :refer $ comp-button
           phlox.comp.drag-point :refer $ comp-drag-point
-          phlox.comp.slider :refer $ comp-slider
+          phlox.comp.slider :refer $ comp-slider comp-spin-slider
           respo-ui.core :as ui
           memof.alias :refer $ memof-call
           app.config :refer $ inline-shader
