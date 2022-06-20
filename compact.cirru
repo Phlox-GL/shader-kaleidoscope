@@ -1,7 +1,7 @@
 
 {} (:package |app)
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.4.10)
-    :modules $ [] |memof/ |lilac/ |respo.calcit/ |respo-ui.calcit/ |phlox/ |touch-control/
+    :modules $ [] |memof/ |lilac/ |respo.calcit/ |respo-ui.calcit/ |phlox/ |touch-control/ |respo-markdown.calcit/
   :entries $ {}
   :files $ {}
     |app.comp.container $ {}
@@ -150,30 +150,7 @@
                       :on-change $ fn (position d!)
                         d! cursor $ assoc state :shift position
         |file-image $ quote
-          def file-image $ let
-              img $ new js/Image
-            if-let
-              old $ js/document.querySelector "\"input"
-              .!remove old
-            &let
-              el $ js/document.createElement "\"input"
-              -> el .-type $ set! "\"file"
-              -> el .-accept $ set! "\"image/apng, image/avif, image/gif, image/jpeg, image/png, image/svg+xml, image/webp"
-              js/document.body.appendChild el
-              .!addEventListener el "\"change" $ fn (event)
-                let
-                    file $ -> event .-target .-files .-0
-                    reader $ new js/FileReader
-                  set! (.-onload reader)
-                    fn (e)
-                      set! (.-src img) (-> e .-target .-result)
-                      flipped js/setTimeout 100 $ fn () (dispatch! :touch nil)
-                  set! (.-onerror reader)
-                    fn (e) (js/console.error "\"Failed to load image" e)
-                  .!readAsDataURL reader file
-              set! (.-className el) "\"visible"
-              , el
-            , img
+          def file-image $ new js/Image
       :ns $ quote
         ns app.comp.kaleidoscope $ :require
           phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh group
@@ -185,6 +162,47 @@
           app.config :refer $ inline-shader
           "\"pixi.js" :as PIXI
           app.store :refer $ dispatch!
+    |app.comp.navbar $ {}
+      :defs $ {}
+        |comp-help-menu $ quote
+          defcomp comp-help-menu () $ div
+            {} $ :style
+              {} (:position :fixed) (:bottom 40) (:border-radius "\"4px") (:right 8) (:padding 8) (:background :white) (:width "\"60vw") (:height "\"60vw") (:overflow :auto)
+            comp-md-block (inline-file "\"README.md") ({})
+            =< nil 120
+        |comp-navbar $ quote
+          defcomp comp-navbar (store)
+            div
+              {} $ :style
+                merge ui/global $ {} (:position :absolute) (:bottom 0) (:right 0) (:background-color :white) (:border-radius "\"4px") (:padding "\"4px 8px")
+              div ({})
+                button $ {} (:inner-text "\"Usages(用法)") (:style ui/button)
+                  :on-click $ fn (e d!) (d! :toggle-help nil)
+                =< 8 nil
+                input $ {} (:type "\"file") (:accept "\"image/apng, image/avif, image/gif, image/jpeg, image/png, image/svg+xml, image/webp")
+                  :on-change $ fn (e d!)
+                    let
+                        event $ :event e
+                      let
+                          file $ -> event .-target .-files .-0
+                          reader $ new js/FileReader
+                        set! (.-onload reader)
+                          fn (e)
+                            set! (.-src file-image) (-> e .-target .-result)
+                            flipped js/setTimeout 100 $ fn () (d! :touch nil)
+                        set! (.-onerror reader)
+                          fn (e) (js/console.error "\"Failed to load image" e)
+                        .!readAsDataURL reader file
+                if (:show-help? store) (comp-help-menu)
+        |inline-file $ quote
+          defmacro inline-file (path) (read-file path)
+      :ns $ quote
+        ns app.comp.navbar $ :require
+          respo.core :refer $ defcomp div <> input button img
+          app.comp.kaleidoscope :refer $ file-image
+          respo.comp.space :refer $ =<
+          respo-ui.core :as ui
+          respo-md.comp.md :refer $ comp-md-block
     |app.config $ {}
       :defs $ {}
         |inline-shader $ quote
@@ -205,6 +223,8 @@
             add-watch *store :change $ fn (store prev) (render-app!)
             when mobile? (render-control!) (start-control-loop! 8 on-control-event)
             println "\"App Started"
+        |mount-target $ quote
+          def mount-target $ js/document.querySelector "\".dom-app"
         |reload! $ quote
           defn reload! () $ if (nil? build-errors)
             do (clear-phlox-caches!) (remove-watch *store :change)
@@ -215,6 +235,7 @@
             hud! "\"error" build-errors
         |render-app! $ quote
           defn render-app! (? arg)
+            respo/render! mount-target (comp-navbar @*store) dispatch!
             render! (comp-container @*store) dispatch! $ or arg ({})
       :ns $ quote
         ns app.main $ :require ("\"pixi.js" :as PIXI)
@@ -229,6 +250,8 @@
           "\"bottom-tip" :default hud!
           touch-control.core :refer $ render-control! start-control-loop! replace-control-loop!
           app.store :refer $ *store dispatch!
+          respo.core :as respo
+          app.comp.navbar :refer $ comp-navbar
     |app.schema $ {}
       :defs $ {}
         |store $ quote
@@ -236,6 +259,7 @@
             :states $ {}
             :cursor $ []
             :n 0
+            :show-help? false
       :ns $ quote (ns app.schema)
     |app.store $ {}
       :defs $ {}
@@ -263,6 +287,7 @@
               do (println "\"unknown op" op op-data) store
               :touch $ update store :n inc
               :states $ update-states store op-data
+              :toggle-help $ update store :show-help? not
               :hydrate-storage op-data
       :ns $ quote
         ns app.updater $ :require
