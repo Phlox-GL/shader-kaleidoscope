@@ -30,15 +30,14 @@
             let
                 cursor $ :cursor states
                 state $ or (:data states)
-                  {} (:n 1)
-                    :shift $ [] 0 0
-                    :scale 1
-                    :parts 3
-                    :radius 0.8
-                    :regress 1
-                    :rotate 0
-                    :spin 0
-                    :spin-position $ [] 200 100
+                  {} (:n 1) (:scale 1) (:parts 3) (:radius 0.8) (:regress 1)
+                    :rotate $ noted "\"bad name, it's skewing and ratating the reflection" 0
+                    :spin $ noted "\"rotate background image" 0
+                    :shape-spin $ noted "\"rotate whole scene" 0
+                    :move-x $ noted "\"move shape horizontally" 0
+                    :shift $ [] 40 80
+                    :spin-position $ [] 200 -240
+                    :shape-spin-position $ [] 200 -120
                 shift $ :shift state
               group ({})
                 mesh $ {}
@@ -70,34 +69,28 @@
                     :regress $ :regress state
                     :toss $ :toss state
                     :spin $ :spin state
+                    :moveX $ :move-x state
+                    :shapeSpin $ :shape-spin state
                 group
                   {} $ :position ([] 520 0)
-                  comp-drag-point (>> states :p3)
-                    {} (:position shift) (:unit 1.0) (:radius 8)
-                      :fill $ hslx 30 90 80
-                      ; :color $ hslx 0 90 100
-                      :alpha 1
-                      :hide-text? true
-                      :on-change $ fn (position d!)
-                        d! cursor $ assoc state :shift position
-                  comp-slider (>> states :scale)
-                    {} (:title "\"scale") (:unit 0.01) (:min 0.2) (:max 5.0)
-                      :position $ [] 0 -300
-                      :fill $ hslx 50 90 70
-                      :color $ hslx 200 90 30
-                      :value $ :scale state
-                      :on-change $ fn (value d!)
-                        d! cursor $ assoc state :scale value
                   comp-slider (>> states :parts)
-                    {} (:title "\"parts") (:unit 0.01) (:min 2) (:max 12)
-                      :position $ [] 0 -240
+                    {} (:title "\"parts") (:unit 0.005) (:min 1.9) (:max 12)
+                      :position $ [] 0 -300
                       :fill $ hslx 50 90 70
                       :color $ hslx 200 90 30
                       :value $ :parts state
                       :on-change $ fn (value d!)
                         d! cursor $ assoc state :parts value
+                  comp-slider (>> states :scale)
+                    {} (:title "\"scale") (:unit 0.01) (:min 0.2) (:max 5.0)
+                      :position $ [] 0 -240
+                      :fill $ hslx 50 90 70
+                      :color $ hslx 200 90 30
+                      :value $ :scale state
+                      :on-change $ fn (value d!)
+                        d! cursor $ assoc state :scale value
                   comp-slider (>> states :radius)
-                    {} (:title "\"radius") (:unit 0.01) (:min 0.02) (:max 0.9)
+                    {} (:title "\"radius") (:unit 0.01) (:min 0.02) (:max 2)
                       :position $ [] 0 -180
                       :fill $ hslx 50 90 70
                       :color $ hslx 200 90 30
@@ -112,9 +105,17 @@
                       :value $ :regress state
                       :on-change $ fn (value d!)
                         d! cursor $ assoc state :regress value
-                  comp-slider (>> states :toss)
-                    {} (:title "\"toss") (:unit 0.01) (:min 0) (:max 2)
+                  comp-slider (>> states :move-x)
+                    {} (:title "\"move-x") (:unit 1)
                       :position $ [] 0 -60
+                      :fill $ hslx 50 90 40
+                      :color $ hslx 200 60 90
+                      :value $ :move-x state
+                      :on-change $ fn (value d!)
+                        d! cursor $ assoc state :move-x value
+                  comp-slider-point (>> states :toss)
+                    {} (:title "\"toss") (:unit 0.001) (:min 0) (:max 2)
+                      :position $ [] 0 0
                       :fill $ hslx 50 90 40
                       :color $ hslx 200 60 90
                       :value $ :toss state
@@ -130,6 +131,24 @@
                         d! cursor $ assoc state :spin value
                       :on-move $ fn (pos d!)
                         d! cursor $ assoc state :spin-position pos
+                  comp-spin-slider (>> states :shape-spin)
+                    {} (:unit 0.5) (:min 0) (:max nil) (:fraction 1)
+                      :position $ :shape-spin-position state
+                      :fill $ hslx 250 90 80
+                      :color $ hslx 200 90 30
+                      :value $ :shape-spin state
+                      :on-change $ fn (value d!)
+                        d! cursor $ assoc state :shape-spin value
+                      :on-move $ fn (pos d!)
+                        d! cursor $ assoc state :shape-spin-position pos
+                  comp-drag-point (>> states :p3)
+                    {} (:position shift) (:unit 0.5) (:radius 12)
+                      :fill $ hslx 30 90 80
+                      ; :color $ hslx 0 90 100
+                      :alpha 1
+                      :hide-text? true
+                      :on-change $ fn (position d!)
+                        d! cursor $ assoc state :shift position
         |file-image $ quote
           def file-image $ let
               img $ new js/Image
@@ -139,6 +158,7 @@
             &let
               el $ js/document.createElement "\"input"
               -> el .-type $ set! "\"file"
+              -> el .-accept $ set! "\"image/apng, image/avif, image/gif, image/jpeg, image/png, image/svg+xml, image/webp"
               js/document.body.appendChild el
               .!addEventListener el "\"change" $ fn (event)
                 let
@@ -147,6 +167,7 @@
                   set! (.-onload reader)
                     fn (e)
                       set! (.-src img) (-> e .-target .-result)
+                      flipped js/setTimeout 100 $ fn () (dispatch! :touch nil)
                   set! (.-onerror reader)
                     fn (e) (js/console.error "\"Failed to load image" e)
                   .!readAsDataURL reader file
@@ -158,11 +179,12 @@
           phlox.core :refer $ g hslx rect circle text container graphics create-list >> mesh group
           phlox.comp.button :refer $ comp-button
           phlox.comp.drag-point :refer $ comp-drag-point
-          phlox.comp.slider :refer $ comp-slider comp-spin-slider
+          phlox.comp.slider :refer $ comp-slider comp-spin-slider comp-slider-point
           respo-ui.core :as ui
           memof.alias :refer $ memof-call
           app.config :refer $ inline-shader
           "\"pixi.js" :as PIXI
+          app.store :refer $ dispatch!
     |app.config $ {}
       :defs $ {}
         |inline-shader $ quote
@@ -174,24 +196,14 @@
         ns app.config $ :require ("\"mobile-detect" :default mobile-detect)
     |app.main $ {}
       :defs $ {}
-        |*store $ quote (defatom *store schema/store)
-        |dispatch! $ quote
-          defn dispatch! (op op-data)
-            when
-              and dev? $ not= op :states
-              println "\"dispatch!" op op-data
-            let
-                op-id $ nanoid
-                op-time $ js/Date.now
-              reset! *store $ updater @*store op op-data op-id op-time
         |main! $ quote
           defn main! () (; js/console.log PIXI)
             if dev? $ load-console-formatter!
             -> (new FontFaceObserver "\"Josefin Sans") (.!load)
               .!then $ fn (event) (render-app!)
+                flipped js/setTimeout 200 $ fn () (dispatch! :touch nil)
             add-watch *store :change $ fn (store prev) (render-app!)
-            when mobile? $ render-control!
-            start-control-loop! 8 on-control-event
+            when mobile? (render-control!) (start-control-loop! 8 on-control-event)
             println "\"App Started"
         |reload! $ quote
           defn reload! () $ if (nil? build-errors)
@@ -216,20 +228,40 @@
           "\"./calcit.build-errors" :default build-errors
           "\"bottom-tip" :default hud!
           touch-control.core :refer $ render-control! start-control-loop! replace-control-loop!
+          app.store :refer $ *store dispatch!
     |app.schema $ {}
       :defs $ {}
         |store $ quote
-          def store $ {} (:tab nil)
+          def store $ {}
             :states $ {}
             :cursor $ []
+            :n 0
       :ns $ quote (ns app.schema)
+    |app.store $ {}
+      :defs $ {}
+        |*store $ quote (defatom *store schema/store)
+        |dispatch! $ quote
+          defn dispatch! (op op-data)
+            when
+              and dev? $ not= op :states
+              println "\"dispatch!" op op-data
+            let
+                op-id $ nanoid
+                op-time $ js/Date.now
+              reset! *store $ updater @*store op op-data op-id op-time
+      :ns $ quote
+        ns app.store $ :require
+          app.updater :refer $ updater
+          app.schema :as schema
+          phlox.config :refer $ dev? mobile?
+          "\"nanoid" :refer $ nanoid
     |app.updater $ {}
       :defs $ {}
         |updater $ quote
           defn updater (store op op-data op-id op-time)
             case-default op
               do (println "\"unknown op" op op-data) store
-              :tab $ assoc store :tab op-data
+              :touch $ update store :n inc
               :states $ update-states store op-data
               :hydrate-storage op-data
       :ns $ quote

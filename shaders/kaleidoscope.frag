@@ -12,6 +12,10 @@ uniform float toss;
 uniform float regress;
 // spin of background image
 uniform float spin;
+// spin of shape
+uniform float shapeSpin;
+// move shape horizontally
+uniform float moveX;
 
 varying vec2 vUvs;
 
@@ -72,6 +76,8 @@ void main() {
     float unit = 2.0 * PI / parts;
 
     vec2 color_point = vUvs;
+    color_point = product(color_point, vec2(cos(-shapeSpin), sin(-shapeSpin)));
+    color_point = color_point - vec2(moveX/400.0, 0);
     for (int i = 0; i < 40; ++i) {
         float point_angle = atan(color_point.y, color_point.x);
         float at_part = floor(point_angle / unit);
