@@ -30,12 +30,12 @@
             let
                 cursor $ :cursor states
                 state $ or (:data states)
-                  {} (:n 1) (:scale 1) (:parts 3) (:radius 0.8) (:regress 1)
+                  {} (:n 1) (:scale 0.5) (:parts 2.5) (:radius 0.4) (:regress 1)
                     :rotate $ noted "\"bad name, it's skewing and ratating the reflection" 0
                     :spin $ noted "\"rotate background image" 0
                     :shape-spin $ noted "\"rotate whole scene" 0
                     :move-x $ noted "\"move shape horizontally" 0
-                    :shift $ [] 40 80
+                    :shift $ [] 100 80
                     :spin-position $ [] 200 -240
                     :shape-spin-position $ [] 200 -120
                 shift $ :shift state
@@ -61,8 +61,8 @@
                     :colorTexture $ .!from PIXI/Texture
                       if
                         blank? $ .-src file-image
-                        , "\"./assets/bricks.jpeg" $ .-src file-image
-                    ; :color2Texture $ .!from PIXI/Texture "\"./assets/orange-flower.jpeg"
+                        , "\"https://cdn.tiye.me/logo/tiye.jpg" $ .-src file-image
+                    ; :color2Texture $ .!from PIXI/Texture "\"https://cdn.tiye.me/logo/tiye.jpg"
                     :scale $ :scale state
                     :parts $ :parts state
                     :radius $ :radius state

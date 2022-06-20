@@ -166,15 +166,15 @@
                                   |l $ {} (:at 1655069569246) (:by |rJG4IHzWf) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1655069570111) (:by |rJG4IHzWf) (:text |:scale) (:type :leaf)
-                                      |b $ {} (:at 1655107952950) (:by |rJG4IHzWf) (:text |1) (:type :leaf)
+                                      |b $ {} (:at 1655756181029) (:by |rJG4IHzWf) (:text |0.5) (:type :leaf)
                                   |o $ {} (:at 1655069569246) (:by |rJG4IHzWf) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1655077363435) (:by |rJG4IHzWf) (:text |:parts) (:type :leaf)
-                                      |b $ {} (:at 1655276166781) (:by |rJG4IHzWf) (:text |3) (:type :leaf)
+                                      |b $ {} (:at 1655756110542) (:by |rJG4IHzWf) (:text |2.5) (:type :leaf)
                                   |q $ {} (:at 1655069569246) (:by |rJG4IHzWf) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1655077510264) (:by |rJG4IHzWf) (:text |:radius) (:type :leaf)
-                                      |b $ {} (:at 1655077516915) (:by |rJG4IHzWf) (:text |0.8) (:type :leaf)
+                                      |b $ {} (:at 1655756161624) (:by |rJG4IHzWf) (:text |0.4) (:type :leaf)
                                   |s $ {} (:at 1655297842575) (:by |rJG4IHzWf) (:type :expr)
                                     :data $ {}
                                       |T $ {} (:at 1655297845087) (:by |rJG4IHzWf) (:text |:regress) (:type :leaf)
@@ -217,7 +217,7 @@
                                       |b $ {} (:at 1655740716799) (:by |rJG4IHzWf) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1655740716799) (:by |rJG4IHzWf) (:text |[]) (:type :leaf)
-                                          |b $ {} (:at 1655740937156) (:by |rJG4IHzWf) (:text |40) (:type :leaf)
+                                          |b $ {} (:at 1655756249034) (:by |rJG4IHzWf) (:text |100) (:type :leaf)
                                           |h $ {} (:at 1655740933314) (:by |rJG4IHzWf) (:text |80) (:type :leaf)
                                   |v $ {} (:at 1655312154028) (:by |rJG4IHzWf) (:type :expr)
                                     :data $ {}
@@ -414,7 +414,7 @@
                                                         :data $ {}
                                                           |T $ {} (:at 1655105410956) (:by |rJG4IHzWf) (:text |.-src) (:type :leaf)
                                                           |b $ {} (:at 1655105410956) (:by |rJG4IHzWf) (:text |file-image) (:type :leaf)
-                                                  |Z $ {} (:at 1655105763880) (:by |rJG4IHzWf) (:text "|\"./assets/bricks.jpeg") (:type :leaf)
+                                                  |Z $ {} (:at 1655756061248) (:by |rJG4IHzWf) (:text "|\"https://cdn.tiye.me/logo/tiye.jpg") (:type :leaf)
                                                   |b $ {} (:at 1655105316539) (:by |rJG4IHzWf) (:type :expr)
                                                     :data $ {}
                                                       |T $ {} (:at 1655105316539) (:by |rJG4IHzWf) (:text |.-src) (:type :leaf)
@@ -427,7 +427,7 @@
                                             :data $ {}
                                               |D $ {} (:at 1655068540421) (:by |rJG4IHzWf) (:text |.!from) (:type :leaf)
                                               |T $ {} (:at 1655068703646) (:by |rJG4IHzWf) (:text |PIXI/Texture) (:type :leaf)
-                                              |b $ {} (:at 1655102700916) (:by |rJG4IHzWf) (:text "|\"./assets/orange-flower.jpeg") (:type :leaf)
+                                              |b $ {} (:at 1655756046719) (:by |rJG4IHzWf) (:text "|\"https://cdn.tiye.me/logo/tiye.jpg") (:type :leaf)
                                       |o $ {} (:at 1655069623037) (:by |rJG4IHzWf) (:type :expr)
                                         :data $ {}
                                           |T $ {} (:at 1655069624128) (:by |rJG4IHzWf) (:text |:scale) (:type :leaf)

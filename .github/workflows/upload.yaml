@@ -39,7 +39,6 @@ jobs:
       run: >
         dev=false cr --emit-js --once
         && yarn && yarn vite build --base=./
-        && cp -rv assets dist/
 
     - name: Deploy to server
       id: deploy

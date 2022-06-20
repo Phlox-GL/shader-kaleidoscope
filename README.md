@@ -28,12 +28,6 @@ Output videos:
 - https://space.bilibili.com/14227306/search/video?keyword=万花筒
 - https://www.ixigua.com/home/3166205900759127/video/?keyword=万花筒&list_entrance=userdetail
 
-### Resource
-
-default images:
-
-- https://www.pinterest.com/pin/5981411997407646/
-
 ### Workflow
 
 https://github.com/Phlox-GL/phlox-workflow
