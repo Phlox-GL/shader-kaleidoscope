@@ -15,7 +15,7 @@ body * {
 }
 
 input {
-  display: none;
+  /*display: none;*/
 }
 
 input.visible {
@@ -25,4 +25,24 @@ input.visible {
   right: 0;
   background-color: transparent;
   color: white;
+}
+
+.dom-app {
+  font-size: 14px;
+}
+
+.md-block {}
+
+.md-span {}
+
+.md-p {
+  margin: 16px 0;
+}
+
+.md-code-block {
+  color: white;
+  background-color: hsl(300, 80%, 20%);
+  padding: 8px;
+  display: block;
+  line-height: 1.5em;
 }

@@ -12,6 +12,6 @@
   },
   "devDependencies": {
     "mobile-detect": "^1.4.5",
-    "vite": "^2.9.10"
+    "vite": "^2.9.12"
   }
 }
