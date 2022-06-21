@@ -166,15 +166,18 @@
       :defs $ {}
         |comp-help-menu $ quote
           defcomp comp-help-menu () $ div
-            {} $ :style
-              {} (:position :fixed) (:bottom 40) (:border-radius "\"4px") (:right 8) (:padding 8) (:background :white) (:width "\"60vw") (:height "\"60vw") (:overflow :auto)
-            comp-md-block (inline-file "\"README.md") ({})
-            =< nil 120
+            {} $ :style style-menu
+            div
+              {} $ :style
+                {} (:overflow :auto) (:height "\"100%") (:padding 16)
+              comp-md-block (inline-file "\"README.md") ({})
+              =< nil 120
+            span $ {} (:class-name style-close) (:inner-text "\"✕")
+              :on-click $ fn (e d!) (d! :toggle-help nil)
         |comp-navbar $ quote
           defcomp comp-navbar (store)
             div
-              {} $ :style
-                merge ui/global $ {} (:position :absolute) (:bottom 0) (:right 0) (:background-color :white) (:border-radius "\"4px") (:padding "\"4px 8px")
+              {} $ :style style-navbar
               div ({})
                 button $ {} (:inner-text "\"Usages(用法)") (:style ui/button)
                   :on-click $ fn (e d!) (d! :toggle-help nil)
@@ -196,13 +199,29 @@
                 if (:show-help? store) (comp-help-menu)
         |inline-file $ quote
           defmacro inline-file (path) (read-file path)
+        |style-close $ quote
+          defstyle style-close $ {}
+            "\"$0" $ {} (:position :absolute) (:top 16) (:right 16) (:color :red) (:font-size 20) (:font-weight 100) (:line-height "\"20px") (:cursor :pointer) (:opacity 0.6) (:transition-duration "\"200ms")
+            "\"$0:hover" $ {} (:opacity 1)
+            "\"$0:active" $ {} (:transform "\"scale(1.2)")
+        |style-menu $ quote
+          def style-menu $ {} (:position :fixed) (:bottom 40) (:border-radius "\"4px") (:right 8) (:width "\"60vw") (:height "\"70%")
+            :background $ hsl 0 0 100 0.94
+        |style-navbar $ quote
+          def style-navbar $ merge ui/global
+            {} (:position :absolute) (:bottom 0) (:right 0)
+              :background-color $ hsl 0 0 100 0.6
+              :border-radius "\"4px"
+              :padding "\"4px 8px"
       :ns $ quote
         ns app.comp.navbar $ :require
-          respo.core :refer $ defcomp div <> input button img
+          respo.core :refer $ defcomp div <> input button img span
           app.comp.kaleidoscope :refer $ file-image
           respo.comp.space :refer $ =<
           respo-ui.core :as ui
+          respo-ui.core :refer $ hsl
           respo-md.comp.md :refer $ comp-md-block
+          respo.css :refer $ defstyle
     |app.config $ {}
       :defs $ {}
         |inline-shader $ quote
