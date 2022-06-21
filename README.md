@@ -9,12 +9,14 @@ Demo https://r.tiye.me/Phlox-GL/shader-kaleidoscope/
 - Click to upload a squared image as the texture
 - Shift + Mouse Drag, to move canvas
 - Shift + Wheel, to zoom in/out
+- Hold two circles nearer to center of screen to fullscreen(disabled in desktops)
 
 ### 使用介绍
 
 - Shift + 鼠标拖拽, 拖动画布 (触摸屏上是左侧菱形按钮)
 - Shift + 鼠标滚轮, 缩放画布 (触摸屏上是右侧菱形按钮)
 - 右下角上传文件可以替换背景图
+- 触摸屏中, 同时按住操作按钮左右靠中间的圆点触发全屏(桌面版没有该功能)
 
 几个按钮可以拖动控制各个参数,
 
