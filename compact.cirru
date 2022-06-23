@@ -13,7 +13,8 @@
                 cursor $ []
                 states $ :states store
                 tab $ either (:tab store) :kaleidoscope
-              container ({})
+              container
+                {} $ :position ([] -200 -100)
                 comp-kaleidoscope $ >> states :kaleidoscope
       :ns $ quote
         ns app.comp.container $ :require
@@ -35,7 +36,7 @@
                     :spin $ noted "\"rotate background image" 0
                     :shape-spin $ noted "\"rotate whole scene" 0
                     :move-x $ noted "\"move shape horizontally" 0
-                    :shift $ [] 100 80
+                    :shift $ [] 100 100
                     :spin-position $ [] 200 -240
                     :shape-spin-position $ [] 200 -120
                 shift $ :shift state
@@ -73,17 +74,18 @@
                     :shapeSpin $ :shape-spin state
                 group
                   {} $ :position ([] 520 0)
-                  comp-slider (>> states :parts)
-                    {} (:title "\"parts") (:unit 0.005) (:min 1.9) (:max 12)
-                      :position $ [] 0 -300
-                      :fill $ hslx 50 90 70
-                      :color $ hslx 200 90 30
+                  comp-spin-slider (>> states :parts)
+                    {} (:label "\"Parts") (:unit 0.08) (:min 1.9) (:max 12)
+                      :position $ [] 80 -240
+                      ; :fill $ hslx 50 90 70
+                      ; :color $ hslx 200 90 30
                       :value $ :parts state
+                      :fraction 3
                       :on-change $ fn (value d!)
                         d! cursor $ assoc state :parts value
                   comp-slider (>> states :scale)
                     {} (:title "\"scale") (:unit 0.01) (:min 0.2) (:max 5.0)
-                      :position $ [] 0 -240
+                      :position $ [] 0 -160
                       :fill $ hslx 50 90 70
                       :color $ hslx 200 90 30
                       :value $ :scale state
@@ -91,7 +93,7 @@
                         d! cursor $ assoc state :scale value
                   comp-slider (>> states :radius)
                     {} (:title "\"radius") (:unit 0.01) (:min 0.02) (:max 2)
-                      :position $ [] 0 -180
+                      :position $ [] 0 -100
                       :fill $ hslx 50 90 70
                       :color $ hslx 200 90 30
                       :value $ :radius state
@@ -99,7 +101,7 @@
                         d! cursor $ assoc state :radius value
                   comp-slider (>> states :regress)
                     {} (:title "\"regress") (:unit 0.01) (:min 0.2) (:max 2)
-                      :position $ [] 0 -120
+                      :position $ [] 0 -40
                       :fill $ hslx 50 90 40
                       :color $ hslx 200 60 90
                       :value $ :regress state
@@ -107,7 +109,7 @@
                         d! cursor $ assoc state :regress value
                   comp-slider (>> states :move-x)
                     {} (:title "\"move-x") (:unit 1)
-                      :position $ [] 0 -60
+                      :position $ [] 0 20
                       :fill $ hslx 50 90 40
                       :color $ hslx 200 60 90
                       :value $ :move-x state
@@ -115,32 +117,33 @@
                         d! cursor $ assoc state :move-x value
                   comp-slider-point (>> states :toss)
                     {} (:title "\"toss") (:unit 0.001) (:min 0) (:max 2)
-                      :position $ [] 0 0
+                      :position $ [] 0 80
                       :fill $ hslx 50 90 40
                       :color $ hslx 200 60 90
                       :value $ :toss state
                       :on-change $ fn (value d!)
                         d! cursor $ assoc state :toss value
                   comp-spin-slider (>> states :spin)
-                    {} (:unit 1) (:min 0) (:max nil) (:fraction 1)
+                    {} (:unit 1) (:min 0) (:max nil) (:fraction 1) (:label "\"Texture spin")
                       :position $ :spin-position state
-                      :fill $ hslx 50 90 70
-                      :color $ hslx 200 90 30
+                      ; :fill $ hslx 50 90 70
+                      ; :color $ hslx 200 90 30
                       :value $ :spin state
                       :on-change $ fn (value d!)
                         d! cursor $ assoc state :spin value
                       :on-move $ fn (pos d!)
                         d! cursor $ assoc state :spin-position pos
                   comp-spin-slider (>> states :shape-spin)
-                    {} (:unit 0.5) (:min 0) (:max nil) (:fraction 1)
+                    {} (:unit 0.5) (:min 0) (:max nil) (:fraction 1) (:label "\"Shape spin")
                       :position $ :shape-spin-position state
-                      :fill $ hslx 250 90 80
-                      :color $ hslx 200 90 30
+                      ; :fill $ hslx 250 90 80
+                      ; :color $ hslx 200 90 30
                       :value $ :shape-spin state
                       :on-change $ fn (value d!)
                         d! cursor $ assoc state :shape-spin value
                       :on-move $ fn (pos d!)
                         d! cursor $ assoc state :shape-spin-position pos
+                      , ()
                   comp-drag-point (>> states :p3)
                     {} (:position shift) (:unit 0.5) (:radius 12)
                       :fill $ hslx 30 90 80
@@ -166,43 +169,63 @@
       :defs $ {}
         |comp-help-menu $ quote
           defcomp comp-help-menu () $ div
-            {} $ :style
-              {} (:position :fixed) (:bottom 40) (:border-radius "\"4px") (:right 8) (:padding 8) (:background :white) (:width "\"60vw") (:height "\"60vw") (:overflow :auto)
-            comp-md-block (inline-file "\"README.md") ({})
-            =< nil 120
+            {} $ :style style-menu
+            div
+              {} $ :style
+                {} (:overflow :auto) (:height "\"100%") (:padding 16)
+              comp-md-block (inline-file "\"README.md") ({})
+              =< nil 120
+            span $ {} (:class-name style-close) (:inner-text "\"✕")
+              :on-click $ fn (e d!) (d! :toggle-help nil)
         |comp-navbar $ quote
           defcomp comp-navbar (store)
             div
-              {} $ :style
-                merge ui/global $ {} (:position :absolute) (:bottom 0) (:right 0) (:background-color :white) (:border-radius "\"4px") (:padding "\"4px 8px")
-              div ({})
-                button $ {} (:inner-text "\"Usages(用法)") (:style ui/button)
-                  :on-click $ fn (e d!) (d! :toggle-help nil)
-                =< 8 nil
-                input $ {} (:type "\"file") (:accept "\"image/apng, image/avif, image/gif, image/jpeg, image/png, image/svg+xml, image/webp")
-                  :on-change $ fn (e d!)
-                    let
-                        event $ :event e
+              {} $ :style style-navbar
+              div
+                {} $ :style ui/column
+                div ({})
+                  button $ {} (:inner-text "\"Usages(用法)") (:style ui/button)
+                    :on-click $ fn (e d!) (d! :toggle-help nil)
+                =< nil 6
+                div ({})
+                  input $ {} (:type "\"file") (:accept "\"image/apng, image/avif, image/gif, image/jpeg, image/png, image/svg+xml, image/webp")
+                    :on-change $ fn (e d!)
                       let
-                          file $ -> event .-target .-files .-0
-                          reader $ new js/FileReader
-                        set! (.-onload reader)
-                          fn (e)
-                            set! (.-src file-image) (-> e .-target .-result)
-                            flipped js/setTimeout 100 $ fn () (d! :touch nil)
-                        set! (.-onerror reader)
-                          fn (e) (js/console.error "\"Failed to load image" e)
-                        .!readAsDataURL reader file
+                          event $ :event e
+                        let
+                            file $ -> event .-target .-files .-0
+                            reader $ new js/FileReader
+                          set! (.-onload reader)
+                            fn (e)
+                              set! (.-src file-image) (-> e .-target .-result)
+                              flipped js/setTimeout 100 $ fn () (d! :touch nil)
+                          set! (.-onerror reader)
+                            fn (e) (js/console.error "\"Failed to load image" e)
+                          .!readAsDataURL reader file
                 if (:show-help? store) (comp-help-menu)
         |inline-file $ quote
           defmacro inline-file (path) (read-file path)
+        |style-close $ quote
+          defstyle style-close $ {}
+            "\"$0" $ {} (:position :absolute) (:top 16) (:right 16) (:color :red) (:font-size 20) (:font-weight 100) (:line-height "\"20px") (:cursor :pointer) (:opacity 0.6) (:transition-duration "\"200ms")
+            "\"$0:hover" $ {} (:opacity 1)
+            "\"$0:active" $ {} (:transform "\"scale(1.2)")
+        |style-menu $ quote
+          def style-menu $ {} (:position :fixed) (:bottom 40) (:border-radius "\"4px") (:right 8) (:width "\"60vw") (:height "\"70%")
+            :background $ hsl 0 0 100 0.94
+        |style-navbar $ quote
+          def style-navbar $ merge ui/global
+            {} (:position :absolute) (:bottom 0) (:right 0) (:border-radius "\"4px") (:padding "\"8px 8px") (:max-width 240)
+              :background-color $ hsl 0 0 100 0.6
       :ns $ quote
         ns app.comp.navbar $ :require
-          respo.core :refer $ defcomp div <> input button img
+          respo.core :refer $ defcomp div <> input button img span
           app.comp.kaleidoscope :refer $ file-image
           respo.comp.space :refer $ =<
           respo-ui.core :as ui
+          respo-ui.core :refer $ hsl
           respo-md.comp.md :refer $ comp-md-block
+          respo.css :refer $ defstyle
     |app.config $ {}
       :defs $ {}
         |inline-shader $ quote
