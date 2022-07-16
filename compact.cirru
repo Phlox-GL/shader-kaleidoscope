@@ -39,6 +39,7 @@
                     :shift $ [] 100 100
                     :spin-position $ [] 200 -240
                     :shape-spin-position $ [] 200 -120
+                    :skip 0
                 shift $ :shift state
               group ({})
                 mesh $ {}
@@ -68,10 +69,10 @@
                     :parts $ :parts state
                     :radius $ :radius state
                     :regress $ :regress state
-                    :toss $ :toss state
                     :spin $ :spin state
                     :moveX $ :move-x state
                     :shapeSpin $ :shape-spin state
+                    :skip $ :skip state
                 group
                   {} $ :position ([] 520 0)
                   comp-spin-slider (>> states :parts)
@@ -115,14 +116,14 @@
                       :value $ :move-x state
                       :on-change $ fn (value d!)
                         d! cursor $ assoc state :move-x value
-                  comp-slider-point (>> states :toss)
-                    {} (:title "\"toss") (:unit 0.001) (:min 0) (:max 2)
+                  comp-slider-point (>> states :skip)
+                    {} (:title "\"toss") (:unit 0.001) (:min -0.2) (:max 0.2)
                       :position $ [] 0 80
                       :fill $ hslx 50 90 40
                       :color $ hslx 200 60 90
-                      :value $ :toss state
+                      :value $ :skip state
                       :on-change $ fn (value d!)
-                        d! cursor $ assoc state :toss value
+                        d! cursor $ assoc state :skip value
                   comp-spin-slider (>> states :spin)
                     {} (:unit 1) (:min 0) (:max nil) (:fraction 1) (:label "\"Texture spin")
                       :position $ :spin-position state

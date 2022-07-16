@@ -1,9 +1,9 @@
 {
   "version": "0.4.10",
   "dependencies": {
-    "@calcit/procs": "^0.5.45",
+    "@calcit/procs": "^0.5.47",
     "@quamolit/phlox-utils": "^0.0.2",
-    "@quamolit/touch-control": "^0.0.8",
+    "@quamolit/touch-control": "^0.0.11",
     "bottom-tip": "^0.1.3",
     "fontfaceobserver-es": "^3.3.3",
     "hsluv": "^0.1.0",
@@ -12,6 +12,6 @@
   },
   "devDependencies": {
     "mobile-detect": "^1.4.5",
-    "vite": "^2.9.12"
+    "vite": "^2.9.14"
   }
 }

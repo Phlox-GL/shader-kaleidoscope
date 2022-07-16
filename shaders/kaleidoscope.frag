@@ -7,8 +7,6 @@ uniform vec2 shift;
 uniform float scale;
 uniform float parts;
 uniform float radius;
-// rotate of position factors its arm to origin point
-uniform float toss;
 uniform float regress;
 // spin of background image
 uniform float spin;
@@ -16,6 +14,7 @@ uniform float spin;
 uniform float shapeSpin;
 // move shape horizontally
 uniform float moveX;
+uniform float skip;
 
 varying vec2 vUvs;
 
@@ -59,7 +58,9 @@ vec2 rotate_by_radian(vec2 p, float a) {
 
 vec2 reflection_line(vec2 p, vec2 p1, vec2 p2) {
     vec2 perp = perpendicular(p, p1, p2);
-    return rotate_by_radian(perp + (perp - p)*regress, toss * length(p));
+    vec2 d = perp - p;
+    float ld = length(d);
+    return perp + (d+ (-skip*d/ld))*regress;
 }
 
 void main() {
