@@ -1,7 +1,7 @@
 {
   "version": "0.4.10",
   "dependencies": {
-    "@calcit/procs": "^0.6.26",
+    "@calcit/procs": "^0.8.46",
     "@quamolit/phlox-utils": "^0.0.2",
     "@quamolit/touch-control": "^0.0.13",
     "bottom-tip": "^0.1.5",
@@ -11,6 +11,8 @@
     "pixi.js": "7.2.4"
   },
   "devDependencies": {
+    "cirru-color": "^0.2.4",
+    "copy-text-to-clipboard": "^3.2.0",
     "mobile-detect": "^1.4.5",
     "vite": "^4.3.3"
   }
