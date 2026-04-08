@@ -148,7 +148,6 @@
                           d! cursor $ assoc state :shape-spin value
                         :on-move $ fn (pos d!)
                           d! cursor $ assoc state :shape-spin-position pos
-                        , ()
                     comp-drag-point (>> states :p3)
                       {} (:position shift) (:unit 0.5) (:radius 12)
                         :fill $ hslx 30 90 80
