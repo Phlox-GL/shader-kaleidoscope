@@ -1,10 +1,15 @@
 {
   "version": "0.4.10",
+  "packageManager": "yarn@4.12.0",
+  "scripts": {
+    "compile": "cr js"
+  },
   "dependencies": {
-    "@calcit/procs": "^0.8.46",
+    "@calcit/procs": "^0.12.14",
     "@quamolit/phlox-utils": "^0.0.2",
     "@quamolit/touch-control": "^0.0.13",
     "bottom-tip": "^0.1.5",
+    "dayjs": "^1.11.20",
     "fontfaceobserver-es": "^3.3.3",
     "hsluv": "^1.0.0",
     "nanoid": "^4.0.2",
@@ -14,6 +19,6 @@
     "cirru-color": "^0.2.4",
     "copy-text-to-clipboard": "^3.2.0",
     "mobile-detect": "^1.4.5",
-    "vite": "^4.3.3"
+    "vite": "^8.0.7"
   }
 }
