@@ -7,3 +7,4 @@
     |Respo/respo.calcit |0.16.81
     |calcit-lang/lilac |0.5.2
     |calcit-lang/memof |0.0.26
+    |calcit-lang/js-ffi |0.1.9
