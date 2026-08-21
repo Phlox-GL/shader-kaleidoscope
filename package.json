@@ -2,10 +2,10 @@
   "version": "0.4.10",
   "packageManager": "yarn@4.12.0",
   "scripts": {
-    "compile": "cr js"
+    "compile": "calcit js"
   },
   "dependencies": {
-    "@calcit/procs": "^0.13.27",
+    "@calcit/procs": "^0.13.29",
     "@quamolit/phlox-utils": "^0.0.2",
     "@quamolit/touch-control": "^0.0.13",
     "bottom-tip": "^0.1.5",
