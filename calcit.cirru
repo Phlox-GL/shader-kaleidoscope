@@ -3,7 +3,7 @@
   :entries $ {}
     :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :native) (:reload-fn 'app.main/reload!)
       :feature-policy $ {}
-      :modules $ [] |memof/ |lilac/ |respo.calcit/ |respo-ui.calcit/ |phlox/ |touch-control/ |respo-markdown.calcit/ |js-ffi/
+      :modules $ [] |respo.calcit/ |respo-ui.calcit/ |phlox/ |touch-control/ |respo-markdown.calcit/ |js-ffi/
       :type-slots $ {}
   :files $ {}
     |app.comp.container $ %{} 'FileEntry
@@ -30,7 +30,6 @@
             phlox.comp.button :refer $ comp-button
             phlox.comp.drag-point :refer $ comp-drag-point
             respo-ui.core :as ui
-            memof.alias :refer $ memof-call
             app.comp.kaleidoscope :refer $ comp-kaleidoscope
     |app.comp.kaleidoscope $ %{} 'FileEntry
       :defs $ {}
@@ -177,10 +176,9 @@
             phlox.comp.drag-point :refer $ comp-drag-point
             phlox.comp.slider :refer $ comp-slider comp-spin-slider comp-slider-point
             respo-ui.core :as ui
-            memof.alias :refer $ memof-call
             app.config :refer $ inline-shader
-            |pixi.js :as PIXI
             app.store :refer $ dispatch!
+            |pixi.js :as PIXI
     |app.comp.navbar $ %{} 'FileEntry
       :defs $ {}
         |comp-help-menu $ %{} 'CodeEntry (:doc |)
