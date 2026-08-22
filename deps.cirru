@@ -1,7 +1,7 @@
 
 {} (:calcit-version |0.13.29)
-  :dependencies $ {} (|Phlox-GL/phlox |main)
-    |Quatrefoil-GL/touch-control |0.0.17
+  :dependencies $ {} (|Phlox-GL/phlox |codex/fix-get-env-calcit-01329)
+    |Triadica/touch-control |codex/migrate-calcit-01329
     |Respo/respo-markdown.calcit |0.4.22
     |Respo/respo-ui.calcit |0.7.9
     |Respo/respo.calcit |0.16.81

@@ -11,11 +11,13 @@
         |comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn comp-container (store)
-              ; println |Store store $ :tab store
+              ; println |Store store $ option:unwrap-or (get store :tab) nil
               let
                   cursor $ []
-                  states $ :states store
-                  tab $ either (:tab store) :kaleidoscope
+                  states $ option:unwrap-or (get store :states) nil
+                  tab $ either
+                    option:unwrap-or (get store :tab) nil
+                    , :kaleidoscope
                 container
                   {} $ :position ([] -200 -100)
                   comp-kaleidoscope $ >> states :kaleidoscope
@@ -36,8 +38,9 @@
           :code $ quote
             defn comp-kaleidoscope (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states)
+                  cursor $ option:unwrap-or (get states :cursor) nil
+                  state $ or
+                    option:unwrap-or (get states :data) nil
                     {} (:n 1) (:scale 0.5) (:parts 2.5) (:radius 0.4) (:regress 1)
                       :rotate $ noted "|bad name, it's skewing and ratating the reflection" 0
                       :spin $ noted "|rotate background image" 0
@@ -47,7 +50,7 @@
                       :spin-position $ [] 200 -240
                       :shape-spin-position $ [] 200 -120
                       :skip 0
-                  shift $ :shift state
+                  shift $ option:unwrap-or (get state :shift) nil
                 group ({})
                   mesh $ {}
                     :position $ [] 100 100
@@ -63,23 +66,23 @@
                       :fragment-source $ inline-shader |kaleidoscope.frag
                     :draw-mode :triangles
                     :uniforms $ js-object
-                      :n $ :n state
+                      :n $ option:unwrap-or (get state :n) nil
                       :shift $ js-array
                         * 0.01 $ nth shift 0
                         * 0.01 $ nth shift 1
                       :colorTexture $ .!from PIXI/Texture
                         if
-                          blank? $ .-src file-image
+                          phlox.core/ffi-nullish? $ .-src file-image
                           , |https://cdn.tiye.me/logo/tiye.jpg $ .-src file-image
                       ; :color2Texture $ .!from PIXI/Texture |https://cdn.tiye.me/logo/tiye.jpg
-                      :scale $ :scale state
-                      :parts $ :parts state
-                      :radius $ :radius state
-                      :regress $ :regress state
-                      :spin $ :spin state
-                      :moveX $ :move-x state
-                      :shapeSpin $ :shape-spin state
-                      :skip $ :skip state
+                      :scale $ option:unwrap-or (get state :scale) nil
+                      :parts $ option:unwrap-or (get state :parts) nil
+                      :radius $ option:unwrap-or (get state :radius) nil
+                      :regress $ option:unwrap-or (get state :regress) nil
+                      :spin $ option:unwrap-or (get state :spin) nil
+                      :moveX $ option:unwrap-or (get state :move-x) nil
+                      :shapeSpin $ option:unwrap-or (get state :shape-spin) nil
+                      :skip $ option:unwrap-or (get state :skip) nil
                   group
                     {} $ :position ([] 520 0)
                     comp-spin-slider (>> states :parts)
@@ -87,7 +90,7 @@
                         :position $ [] 80 -240
                         ; :fill $ hslx 50 90 70
                         ; :color $ hslx 200 90 30
-                        :value $ :parts state
+                        :value $ option:unwrap-or (get state :parts) nil
                         :fraction 3
                         :on-change $ fn (value d!)
                           d! cursor $ assoc state :parts value
@@ -96,7 +99,7 @@
                         :position $ [] 0 -160
                         :fill $ hslx 50 90 70
                         :color $ hslx 200 90 30
-                        :value $ :scale state
+                        :value $ option:unwrap-or (get state :scale) nil
                         :on-change $ fn (value d!)
                           d! cursor $ assoc state :scale value
                     comp-slider (>> states :radius)
@@ -104,7 +107,7 @@
                         :position $ [] 0 -100
                         :fill $ hslx 50 90 70
                         :color $ hslx 200 90 30
-                        :value $ :radius state
+                        :value $ option:unwrap-or (get state :radius) nil
                         :on-change $ fn (value d!)
                           d! cursor $ assoc state :radius value
                     comp-slider (>> states :regress)
@@ -112,7 +115,7 @@
                         :position $ [] 0 -40
                         :fill $ hslx 50 90 40
                         :color $ hslx 200 60 90
-                        :value $ :regress state
+                        :value $ option:unwrap-or (get state :regress) nil
                         :on-change $ fn (value d!)
                           d! cursor $ assoc state :regress value
                     comp-slider (>> states :move-x)
@@ -120,7 +123,7 @@
                         :position $ [] 0 20
                         :fill $ hslx 50 90 40
                         :color $ hslx 200 60 90
-                        :value $ :move-x state
+                        :value $ option:unwrap-or (get state :move-x) nil
                         :on-change $ fn (value d!)
                           d! cursor $ assoc state :move-x value
                     comp-slider-point (>> states :skip)
@@ -128,25 +131,25 @@
                         :position $ [] 0 80
                         :fill $ hslx 50 90 40
                         :color $ hslx 200 60 90
-                        :value $ :skip state
+                        :value $ option:unwrap-or (get state :skip) nil
                         :on-change $ fn (value d!)
                           d! cursor $ assoc state :skip value
                     comp-spin-slider (>> states :spin)
                       {} (:unit 1) (:min 0) (:max nil) (:fraction 1) (:label "|Texture spin")
-                        :position $ :spin-position state
+                        :position $ option:unwrap-or (get state :spin-position) nil
                         ; :fill $ hslx 50 90 70
                         ; :color $ hslx 200 90 30
-                        :value $ :spin state
+                        :value $ option:unwrap-or (get state :spin) nil
                         :on-change $ fn (value d!)
                           d! cursor $ assoc state :spin value
                         :on-move $ fn (pos d!)
                           d! cursor $ assoc state :spin-position pos
                     comp-spin-slider (>> states :shape-spin)
                       {} (:unit 0.5) (:min 0) (:max nil) (:fraction 1) (:label "|Shape spin")
-                        :position $ :shape-spin-position state
+                        :position $ option:unwrap-or (get state :shape-spin-position) nil
                         ; :fill $ hslx 250 90 80
                         ; :color $ hslx 200 90 30
-                        :value $ :shape-spin state
+                        :value $ option:unwrap-or (get state :shape-spin) nil
                         :on-change $ fn (value d!)
                           d! cursor $ assoc state :shape-spin value
                         :on-move $ fn (pos d!)
@@ -208,18 +211,37 @@
                     input $ {} (:type |file) (:accept "|image/apng, image/avif, image/gif, image/jpeg, image/png, image/svg+xml, image/webp")
                       :on-change $ fn (e d!)
                         let
-                            event $ :event e
+                            event $ option:unwrap-or (get e :event) nil
                           let
-                              file $ -> event .-target .-files .-0
+                              file $ ffi-event-file event
                               reader $ new js/FileReader
                             set! (.-onload reader)
                               fn (e)
-                                set! (.-src file-image) (-> e .-target .-result)
+                                set! (.-src file-image) (ffi-event-result e)
                                 flipped js/setTimeout 100 $ fn () (d! :touch nil)
                             set! (.-onerror reader)
                               fn (e) (js/console.error "|Failed to load image" e)
                             .!readAsDataURL reader file
-                  if (:show-help? store) (comp-help-menu)
+                  if
+                    option:unwrap-or (get store :show-help?) nil
+                    comp-help-menu
+          :examples $ []
+          :schema $ :: 'Dynamic
+        |ffi-event-file $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn ffi-event-file (event)
+              let
+                  target $ unsafe-coerce (.-target event) JsObject
+                  files $ unsafe-coerce (.-files target) JsObject
+                unsafe-coerce (.-0 files) JsObject
+          :examples $ []
+          :schema $ :: 'Dynamic
+        |ffi-event-result $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn ffi-event-result (event)
+              let
+                  target $ unsafe-coerce (.-target event) JsObject
+                unsafe-coerce (.-result target) String
           :examples $ []
           :schema $ :: 'Dynamic
         |inline-file $ %{} 'CodeEntry (:doc |)
@@ -281,7 +303,7 @@
             defn main! () (; js/console.log PIXI)
               if dev? $ load-console-formatter!
               -> (new FontFaceObserver "|Josefin Sans") (.!load)
-                .!then $ fn (event) (render-app!)
+                phlox.core/ffi-then $ fn (event) (render-app!)
                   flipped js/setTimeout 200 $ fn ()
                     dispatch! $ :: :touch
               add-watch *store :change $ fn (store prev) (render-app!)
