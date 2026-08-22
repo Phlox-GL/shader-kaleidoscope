@@ -1,9 +1,8 @@
 
-{} (:calcit-version |0.12.14)
-  :dependencies $ {} (|Phlox-GL/phlox |0.7.3)
-    |Quatrefoil-GL/touch-control |0.0.17
-    |Respo/respo-markdown.calcit |0.4.11
-    |Respo/respo-ui.calcit |0.6.4
-    |Respo/respo.calcit |0.16.32
-    |calcit-lang/lilac |0.5.1
-    |calcit-lang/memof |0.0.23
+{} (:calcit-version |0.13.29)
+  :version |0.4.10
+  :dependencies $ {} (|Phlox-GL/phlox |0.7.6)
+    |Respo/respo-markdown.calcit |0.4.22
+    |Respo/respo-ui.calcit |0.7.9
+    |Respo/respo.calcit |0.16.70
+    |calcit-lang/js-ffi |0.1.9
