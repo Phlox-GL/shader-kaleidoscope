@@ -1,11 +1,14 @@
 {
-  "version": "0.4.10",
-  "packageManager": "yarn@4.12.0",
+  "version": "0.4.11",
+  "packageManager": "yarn@4.18.0",
   "scripts": {
-    "compile": "calcit calcit.cirru js"
+    "compile": "calcit calcit.cirru js",
+    "build": "vite build",
+    "release": "yarn compile && yarn build",
+    "dev": "calcit calcit.cirru js && vite"
   },
   "dependencies": {
-    "@calcit/procs": "^0.13.29",
+    "@calcit/procs": "0.27.0",
     "@quamolit/phlox-utils": "^0.0.2",
     "@quamolit/touch-control": "^0.0.13",
     "bottom-tip": "^0.1.5",
@@ -19,6 +22,6 @@
     "cirru-color": "^0.2.4",
     "copy-text-to-clipboard": "^3.2.0",
     "mobile-detect": "^1.4.5",
-    "vite": "^8.0.7"
+    "vite": "^8.3.1"
   }
 }
