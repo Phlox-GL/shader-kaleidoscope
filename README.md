@@ -2,6 +2,15 @@
 
 Demo https://r.tiye.me/Phlox-GL/shader-kaleidoscope/
 
+Use Calcit/procs 0.27.0 with canonical `calcit.cirru` and `deps.cirru`;
+CI rejects retired `compact.cirru` and `package.cirru`. The default entry emits
+browser JavaScript. Config strings and operation arguments have explicit
+Map/Enum contracts; existing open state and rendering boundaries remain.
+
+PR previews use `pr/<number>/<run-id>/`. Vite and COS Action v1.1.1 share the
+base URL; upload verification uses the action itself without an extra checker.
+Production prefixes and original server deployment paths remain unchanged.
+
 ### Usages
 
 - Mouse Drag on point to move the shift position of image
