@@ -7,9 +7,16 @@ CI rejects retired `compact.cirru` and `package.cirru`. The default entry emits
 browser JavaScript. Config strings and operation arguments have explicit
 Map/Enum contracts; existing open state and rendering boundaries remain.
 
-PR previews use `pr/<number>/<run-id>/`. Vite and COS Action v1.1.1 share the
-base URL; upload verification uses the action itself without an extra checker.
+PR previews use `pr/<number>/<run-id>/<attempt>/`. Vite and released COS Action v1.2.0 share the
+base URL; HTML reference checks and public upload verification use the action itself without an extra checker.
 Production prefixes and original server deployment paths remain unchanged.
+Runs queue per PR and separately for production without cancellation. Before
+production publishing, CI compares the run revision with current main once;
+stale runs skip both COS and server publishing.
+
+`yarn build` compiles the default JS entry and bundles once; `yarn release`
+uses the same build. `yarn dev` compiles initially and starts Vite. Run
+`calcit calcit.cirru -w` in another terminal for live edits, without concurrently.
 
 ### Usages
 
