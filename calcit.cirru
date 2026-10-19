@@ -15,15 +15,17 @@
             ; println |Store store $ option:unwrap-or (get store :tab) nil
             let
                 cursor $ []
-                states $ option:unwrap-or (get store :states) nil
+                states $ decode-map-as
+                  .unwrap $ get store :states
+                  :: 'Map 'Tag 'Dynamic
                 tab $ either
                   option:unwrap-or (get store :tab) nil
                   , :kaleidoscope
               container
                 {} $ :position $ [] -200 -100
-                comp-kaleidoscope $ >> states :kaleidoscope
+                comp-kaleidoscope $ decode-map-as (>> states :kaleidoscope) (:: 'Map 'Tag 'Dynamic)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
@@ -38,19 +40,23 @@
         'comp-kaleidoscope $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-kaleidoscope (states)
             let
-                cursor $ option:unwrap-or (get states :cursor) nil
-                state $ or
-                  option:unwrap-or (get states :data) nil
-                  {} (:n 1) (:scale 0.5) (:parts 2.5) (:radius 0.4) (:regress 1)
-                    :rotate $ noted "|bad name, it's skewing and ratating the reflection" 0
-                    :spin $ noted "|rotate background image" 0
-                    :shape-spin $ noted "|rotate whole scene" 0
-                    :move-x $ noted "|move shape horizontally" 0
-                    :shift $ [] 100 100
-                    :spin-position $ [] 200 -240
-                    :shape-spin-position $ [] 200 -120
-                    :skip 0
-                shift $ option:unwrap-or (get state :shift) nil
+                cursor $ decode-map-as
+                  .unwrap $ get states :cursor
+                  :: 'List 'Dynamic
+                state $ decode-map-as
+                  or
+                    option:unwrap-or (get states :data) nil
+                    {} (:n 1) (:scale 0.5) (:parts 2.5) (:radius 0.4) (:regress 1)
+                      :rotate $ noted "|bad name, it's skewing and ratating the reflection" 0
+                      :spin $ noted "|rotate background image" 0
+                      :shape-spin $ noted "|rotate whole scene" 0
+                      :move-x $ noted "|move shape horizontally" 0
+                      :shift $ [] 100 100
+                      :spin-position $ [] 200 -240
+                      :shape-spin-position $ [] 200 -120
+                      :skip 0
+                  , 'app.schema/KaleidoscopeState
+                shift $ :shift state
               group ({})
                 mesh $ {}
                   :position $ [] 100 100
@@ -66,22 +72,22 @@
                     :fragment-source $ inline-shader |kaleidoscope.frag
                   :draw-mode :triangles
                   :uniforms $ js-object
-                    :n $ option:unwrap-or (get state :n) nil
+                    :n $ :n state
                     :shift $ js-array
                       * 0.01 $ option:unwrap-or (nth shift 0) 0
                       * 0.01 $ option:unwrap-or (nth shift 1) 0
                     :colorTexture $ .!from PIXI/Texture $ if
-                      phlox.core/ffi-nullish? $ file-image-src
-                      , |https://cdn.tiye.me/logo/tiye.jpg (file-image-src)
+                      = | $ file-image-src
+                      , |https://cdn.tiye.me/logo/tiye.jpg file-image
                     ; :color2Texture $ .!from PIXI/Texture |https://cdn.tiye.me/logo/tiye.jpg
-                    :scale $ option:unwrap-or (get state :scale) nil
-                    :parts $ option:unwrap-or (get state :parts) nil
-                    :radius $ option:unwrap-or (get state :radius) nil
-                    :regress $ option:unwrap-or (get state :regress) nil
-                    :spin $ option:unwrap-or (get state :spin) nil
-                    :moveX $ option:unwrap-or (get state :move-x) nil
-                    :shapeSpin $ option:unwrap-or (get state :shape-spin) nil
-                    :skip $ option:unwrap-or (get state :skip) nil
+                    :scale $ :scale state
+                    :parts $ :parts state
+                    :radius $ :radius state
+                    :regress $ :regress state
+                    :spin $ :spin state
+                    :moveX $ :move-x state
+                    :shapeSpin $ :shape-spin state
+                    :skip $ :skip state
                 group
                   {} $ :position $ [] 520 0
                   comp-spin-slider (>> states :parts)
@@ -89,70 +95,70 @@
                       :position $ [] 80 -240
                       ; :fill $ hslx 50 90 70
                       ; :color $ hslx 200 90 30
-                      :value $ option:unwrap-or (get state :parts) nil
+                      :value $ :parts state
                       :fraction 3
                       :on-change $ fn (value d!)
-                        d! cursor $ assoc state :parts value
+                        d! $ :: :states cursor $ assoc (&struct:to-map state) :parts value
                   comp-slider (>> states :scale)
                     {} (:title |scale) (:unit 0.01) (:min 0.2) (:max 5.0)
                       :position $ [] 0 -160
                       :fill $ hslx 50 90 70
                       :color $ hslx 200 90 30
-                      :value $ option:unwrap-or (get state :scale) nil
+                      :value $ :scale state
                       :on-change $ fn (value d!)
-                        d! cursor $ assoc state :scale value
+                        d! $ :: :states cursor $ assoc (&struct:to-map state) :scale value
                   comp-slider (>> states :radius)
                     {} (:title |radius) (:unit 0.01) (:min 0.02) (:max 2)
                       :position $ [] 0 -100
                       :fill $ hslx 50 90 70
                       :color $ hslx 200 90 30
-                      :value $ option:unwrap-or (get state :radius) nil
+                      :value $ :radius state
                       :on-change $ fn (value d!)
-                        d! cursor $ assoc state :radius value
+                        d! $ :: :states cursor $ assoc (&struct:to-map state) :radius value
                   comp-slider (>> states :regress)
                     {} (:title |regress) (:unit 0.01) (:min 0.2) (:max 2)
                       :position $ [] 0 -40
                       :fill $ hslx 50 90 40
                       :color $ hslx 200 60 90
-                      :value $ option:unwrap-or (get state :regress) nil
+                      :value $ :regress state
                       :on-change $ fn (value d!)
-                        d! cursor $ assoc state :regress value
+                        d! $ :: :states cursor $ assoc (&struct:to-map state) :regress value
                   comp-slider (>> states :move-x)
                     {} (:title |move-x) (:unit 1)
                       :position $ [] 0 20
                       :fill $ hslx 50 90 40
                       :color $ hslx 200 60 90
-                      :value $ option:unwrap-or (get state :move-x) nil
+                      :value $ :move-x state
                       :on-change $ fn (value d!)
-                        d! cursor $ assoc state :move-x value
+                        d! $ :: :states cursor $ assoc (&struct:to-map state) :move-x value
                   comp-slider-point (>> states :skip)
                     {} (:title |toss) (:unit 0.001) (:min -0.2) (:max 0.2)
                       :position $ [] 0 80
                       :fill $ hslx 50 90 40
                       :color $ hslx 200 60 90
-                      :value $ option:unwrap-or (get state :skip) nil
+                      :value $ :skip state
                       :on-change $ fn (value d!)
-                        d! cursor $ assoc state :skip value
+                        d! $ :: :states cursor $ assoc (&struct:to-map state) :skip value
                   comp-spin-slider (>> states :spin)
                     {} (:unit 1) (:min 0) (:max nil) (:fraction 1) (:label "|Texture spin")
-                      :position $ option:unwrap-or (get state :spin-position) nil
+                      :position $ :spin-position state
                       ; :fill $ hslx 50 90 70
                       ; :color $ hslx 200 90 30
-                      :value $ option:unwrap-or (get state :spin) nil
+                      :value $ :spin state
                       :on-change $ fn (value d!)
-                        d! cursor $ assoc state :spin value
+                        d! $ :: :states cursor $ assoc (&struct:to-map state) :spin value
                       :on-move $ fn (pos d!)
-                        d! cursor $ assoc state :spin-position pos
+                        d! $ :: :states cursor $ assoc (&struct:to-map state) :spin-position pos
                   comp-spin-slider (>> states :shape-spin)
                     {} (:unit 0.5) (:min 0) (:max nil) (:fraction 1) (:label "|Shape spin")
-                      :position $ option:unwrap-or (get state :shape-spin-position) nil
+                      :position $ :shape-spin-position state
                       ; :fill $ hslx 250 90 80
                       ; :color $ hslx 200 90 30
-                      :value $ option:unwrap-or (get state :shape-spin) nil
+                      :value $ :shape-spin state
                       :on-change $ fn (value d!)
-                        d! cursor $ assoc state :shape-spin value
+                        d! $ :: :states cursor $ assoc (&struct:to-map state) :shape-spin value
                       :on-move $ fn (pos d!)
-                        d! cursor $ assoc state :shape-spin-position pos
+                        d! $ :: :states cursor $ assoc (&struct:to-map state) :shape-spin-position pos
                   comp-drag-point (>> states :p3)
                     {} (:position shift) (:unit 0.5) (:radius 12)
                       :fill $ hslx 30 90 80
@@ -160,16 +166,15 @@
                       :alpha 1
                       :hide-text? true
                       :on-change $ fn (position d!)
-                        d! cursor $ assoc state :shift position
+                        d! $ :: :states cursor $ assoc (&struct:to-map state) :shift position
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
+            :args $ [] $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'create-file-image $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn create-file-image ()
-            unsafe-coerce (new js/Image) 'Dynamic
+          :code $ quote $ defn create-file-image () (browser/image-create)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'js-ffi.browser/ImageHost)
             :args $ []
             :features $ #{} :js-ffi
         'file-image $ %{} 'CodeEntry (:doc |)
@@ -195,6 +200,7 @@
             app.store :refer $ dispatch!
             |pixi.js :as PIXI
             js-ffi.contract :as ffi
+            js-ffi.browser :as browser
     'app.comp.navbar $ %{} 'FileEntry
       :defs $ {}
         'FileReaderHost $ %{} 'CodeEntry (:doc |)
@@ -202,11 +208,6 @@
             .readAsDataURL $ :: 'Fn $ {}
               :args $ [] 'FileReaderHost 'JsObject
               :return 'Dynamic
-          :examples $ []
-          :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
-          :schema $ :: 'Trait
-        'ImageHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait ImageHost (:src 'String)
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
           :schema $ :: 'Trait
@@ -219,7 +220,8 @@
                 comp-md-block (inline-file |README.md) ({})
                 =< nil 120
               span $ {} (:class-name style-close) (:inner-text "|✕")
-                :on-click $ fn (e d!) (d! :toggle-help nil)
+                :on-click $ fn (e d!)
+                  d! $ :: :toggle-help
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
             :args $ []
@@ -231,7 +233,8 @@
                 {} $ :style ui/column
                 div ({})
                   button $ {} (:inner-text "|Usages(用法)") (:style ui/button)
-                    :on-click $ fn (e d!) (d! :toggle-help nil)
+                    :on-click $ fn (e d!)
+                      d! $ :: :toggle-help
                 =< nil 6
                 div ({})
                   input $ {} (:type |file)
@@ -244,8 +247,14 @@
                             reader $ unsafe-coerce (new js/FileReader) FileReaderHost
                           set! (.-onload reader)
                             fn (e)
-                              ffi-set-image-src! $ ffi-event-result e
-                              flipped js/setTimeout 100 $ fn () $ d! :touch nil
+                              hint-fn $ {} $ :async true
+                              browser/image-src! file-image $ ffi-event-result e
+                              match
+                                js-await $ browser/image-decode! file-image
+                                (:ok _)
+                                  d! $ :: :touch
+                                (:err error) (js/console.error |Failed-to-decode-image error)
+                              , &unit
                           set! (.-onerror reader)
                             fn (e) (js/console.error "|Failed to load image" e)
                           .!readAsDataURL reader file
@@ -278,15 +287,6 @@
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'String)
             :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
-        'ffi-set-image-src! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn ffi-set-image-src! (value)
-            set!
-              .-src $ unsafe-coerce file-image ImageHost
-              , value
-          :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'String
             :features $ #{} :js-ffi
         'inline-file $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defmacro inline-file (path)
@@ -327,6 +327,7 @@
             respo-md.comp.md :refer $ comp-md-block
             respo.css :refer $ defstyle
             js-ffi.contract :as ffi
+            js-ffi.browser :as browser
     'app.config $ %{} 'FileEntry
       :defs $ {}
         'inline-shader $ %{} 'CodeEntry (:doc |)
@@ -357,14 +358,14 @@
           :schema $ :: 'Trait
         'detect-mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn detect-mount-target ()
-            unsafe-coerce (js/document.querySelector |.dom-app) 'Dynamic
+            .unwrap $ dom/query-selector |.dom-app
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'respo.dom/DomElement)
             :args $ []
             :features $ #{} :js-ffi
         'load-font! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn load-font! ()
-            .!load $ unsafe-coerce (new FontFaceObserver "||Josefin Sans") FontFaceObserverHost
+            .!load $ unsafe-coerce (new FontFaceObserver "|Josefin Sans") FontFaceObserverHost
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Dynamic)
             :args $ []
@@ -375,7 +376,7 @@
             -> (load-font!)
               phlox.core/ffi-then $ fn (event) (render-app!)
                 flipped js/setTimeout 200 $ fn () $ dispatch! (:: :touch)
-            add-watch *store :change $ fn (store prev) (render-app!)
+            add-watch! *store :change $ fn (store prev) (render-app!)
             when mobile? (render-control!) (start-control-loop! 8 on-control-event)
             println "||App Started"
           :examples $ []
@@ -389,22 +390,26 @@
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (nil? build-errors)
-              do (clear-phlox-caches!) (remove-watch *store :change)
-                add-watch *store :change $ fn (store prev) (render-app!)
+              do (clear-phlox-caches!) (remove-watch! *store :change)
+                add-watch! *store :change $ fn (store prev) (render-app!)
                 render-app!
                 when mobile? $ replace-control-loop! 8 on-control-event
                 hud! |ok~ |Ok
               hud! |error build-errors
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
         'render-app! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn render-app! (arg)
-            respo/render! mount-target (comp-navbar @*store) dispatch!
-            render! (comp-container @*store) dispatch! $ option:unwrap-or arg $ {}
+          :code $ quote $ defn render-app! ()
+            respo/render! mount-target (comp-navbar @*store)
+              fn (raw-op)
+                if (enum? raw-op) (dispatch! raw-op) (raise |Expected-operation-enum)
+                , &unit
+            render! (comp-container @*store) dispatch! $ {}
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] $ :: 'Option 'Dynamic
+            :args $ []
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require (|pixi.js :as PIXI)
@@ -421,9 +426,17 @@
             app.store :refer $ *store dispatch!
             respo.core :as respo
             app.comp.navbar :refer $ comp-navbar
+            respo.ffi.browser :as dom
     'app.schema $ %{} 'FileEntry
-      :defs $ {} $ 'store
-        %{} 'CodeEntry (:doc |)
+      :defs $ {}
+        'KaleidoscopeState $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct KaleidoscopeState (:n 'Number) (:scale 'Number) (:parts 'Number) (:radius 'Number) (:regress 'Number) (:rotate 'Number) (:spin 'Number) (:shape-spin 'Number) (:move-x 'Number) (:skip 'Number)
+            :shift $ :: 'List 'Number
+            :spin-position $ :: 'List 'Number
+            :shape-spin-position $ :: 'List 'Number
+          :examples $ []
+          :schema $ :: 'StructDef
+        'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             {}
               :states $ {}
@@ -448,9 +461,10 @@
                 _ true
               println |dispatch! op
             let
-                op-id nanoid
-                op-time $ unsafe-coerce (js/Date.now) 'Number
+                op-id $ decode-map-as (nanoid) 'String
+                op-time $ decode-map-as (js/Date.now) 'Number
               reset! *store $ updater @*store op op-id op-time
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'Enum
@@ -468,21 +482,48 @@
           :code $ quote $ defn updater (store op op-id op-time)
             match op
               (:touch)
-                assoc store :n $ inc $ unsafe-coerce
+                assoc store :n $ inc $ decode-map-as
                   option:unwrap-or (get store :n) 0
                   , 'Number
-              (:states cursor s) (update-states store cursor s)
+              (:states cursor s)
+                update-states store
+                  decode-map-as cursor $ :: 'List 'Dynamic
+                  , s
               (:toggle-help)
-                assoc store :show-help? $ not $ unsafe-coerce
+                assoc store :show-help? $ not $ decode-map-as
                   option:unwrap-or (get store :show-help?) false
                   , 'Bool
-              (:hydrate-storage op-data) op-data
+              (:hydrate-storage op-data)
+                decode-map-as op-data $ :: 'Map 'Tag 'Dynamic
               _ $ do (eprintln |unknown op op) store
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] (:: 'Map 'Tag 'Dynamic) 'Enum 'String 'Number
             :features $ #{} :js-ffi
             :return $ :: 'Map 'Tag 'Dynamic
+          :tests $ [] $ %{} 'TestEntry (:name |routes-controls-and-help)
+            :code $ quote $ let
+                initial $ {}
+                  :states $ {}
+                  :n 0
+                  :show-help? false
+                changed $ updater initial
+                  :: :states ([] :kaleidoscope)
+                    {} $ :scale 0.9
+                  , |id 1
+              assert=
+                {} $ :scale 0.9
+                .unwrap $ get
+                  .unwrap $ get
+                    .unwrap $ get changed :states
+                    , :kaleidoscope
+                  , :data
+              assert= true $ .unwrap $ get
+                updater changed (:: :toggle-help) |id 2
+                , :show-help?
+              assert= 1 $ .unwrap $ get
+                updater changed (:: :touch) |id 3
+                , :n
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
-          :require $ [] phlox.cursor :refer $ [] update-states
+          :require $ phlox.cursor :refer $ update-states
