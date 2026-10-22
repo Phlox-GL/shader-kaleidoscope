@@ -12,14 +12,14 @@
       :defs $ {} $ 'comp-container
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-container (store)
-            ; println |Store store $ option:unwrap-or (get store :tab) nil
+            ; println |Store store $ .unwrap-or (get store :tab) nil
             let
                 cursor $ []
                 states $ decode-map-as
                   .unwrap $ get store :states
                   :: 'Map 'Tag 'Dynamic
                 tab $ either
-                  option:unwrap-or (get store :tab) nil
+                  .unwrap-or (get store :tab) nil
                   , :kaleidoscope
               container
                 {} $ :position $ [] -200 -100
@@ -45,7 +45,7 @@
                   :: 'List 'Dynamic
                 state $ decode-map-as
                   or
-                    option:unwrap-or (get states :data) nil
+                    .unwrap-or (get states :data) nil
                     {} (:n 1) (:scale 0.5) (:parts 2.5) (:radius 0.4) (:regress 1)
                       :rotate $ noted "|bad name, it's skewing and ratating the reflection" 0
                       :spin $ noted "|rotate background image" 0
@@ -74,8 +74,8 @@
                   :uniforms $ js-object
                     :n $ :n state
                     :shift $ js-array
-                      * 0.01 $ option:unwrap-or (nth shift 0) 0
-                      * 0.01 $ option:unwrap-or (nth shift 1) 0
+                      * 0.01 $ .unwrap-or (nth shift 0) 0
+                      * 0.01 $ .unwrap-or (nth shift 1) 0
                     :colorTexture $ .!from PIXI/Texture $ if
                       = | $ file-image-src
                       , |https://cdn.tiye.me/logo/tiye.jpg file-image
@@ -241,7 +241,7 @@
                     :accept "|image/apng, image/avif, image/gif, image/jpeg, image/png, image/svg+xml, image/webp"
                     :on-change $ fn (e d!)
                       let
-                          event $ option:unwrap-or (get e :event) nil
+                          event $ .unwrap-or (get e :event) nil
                         let
                             file $ ffi-event-file event
                             reader $ unsafe-coerce (new js/FileReader) FileReaderHost
@@ -259,7 +259,7 @@
                             fn (e) (js/console.error "|Failed to load image" e)
                           .!readAsDataURL reader file
                 if
-                  option:unwrap-or (get store :show-help?) nil
+                  .unwrap-or (get store :show-help?) nil
                   comp-help-menu
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
@@ -483,7 +483,7 @@
             match op
               (:touch)
                 assoc store :n $ inc $ decode-map-as
-                  option:unwrap-or (get store :n) 0
+                  .unwrap-or (get store :n) 0
                   , 'Number
               (:states cursor s)
                 update-states store
@@ -491,7 +491,7 @@
                   , s
               (:toggle-help)
                 assoc store :show-help? $ not $ decode-map-as
-                  option:unwrap-or (get store :show-help?) false
+                  .unwrap-or (get store :show-help?) false
                   , 'Bool
               (:hydrate-storage op-data)
                 decode-map-as op-data $ :: 'Map 'Tag 'Dynamic

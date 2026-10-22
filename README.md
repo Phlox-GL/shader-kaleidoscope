@@ -2,20 +2,22 @@
 
 Demo https://r.tiye.me/Phlox-GL/shader-kaleidoscope/
 
-Candidate migration uses paired Calcit/procs 0.30.1-alpha.5 with canonical `calcit.cirru` and `deps.cirru`;
+Migration uses precisely paired formal Calcit/procs 0.30.1 with canonical `calcit.cirru` and `deps.cirru`;
 CI rejects retired `compact.cirru` and `package.cirru`. The default entry emits
 browser JavaScript. Config strings and operation arguments have explicit
 Map/Enum contracts; existing open state and rendering boundaries remain.
 
-本轮候选使用正式 Phlox 0.7.15、Markdown 0.4.57、Respo UI 0.7.41、Respo
-0.16.122 和 js-ffi 0.2.3。绘图参数解码为 KaleidoscopeState，控件回调使用
+本轮候选使用已发布正式 Phlox 0.7.16、Markdown 0.4.59、Respo UI 0.8.0、Respo
+0.16.124 和 js-ffi 0.2.5。绘图参数解码为 KaleidoscopeState，控件回调使用
 单 Enum dispatch，仍按原 cursor 写入 Map；着色器及参数公式不变。修复 nanoid
 未调用、旧 watch 名称、Unit 返回合同和 mount target 强转，DOM 查询使用 Respo
 已发布接口。修正错误字体名与空图片源默认纹理；图片上传等待实际解码成功后
 再重绘，删除固定 100ms 延时，避免黑屏直到下一次交互。
-本地全定义 379/379、完整 strict、附着业务回归及生产构建通过；真实页面已验证
-默认纹理启动、Scale 拖拽、帮助面板开关及合成图片上传自动重绘，无新增错误。
-仍不宣称已完成正式 0.30.1、移动端双触点或生产验收。
+9处内部 Option helper（含一处注释）迁为公开方法，保留原默认值和公式。
+`hud!` 页面错误/成功提示保留，不改成 `raise`；Pixi 同主版本更新到7.4.3，
+使用已修正的 `@pixi/assets` peer 元数据，不加 shim 或升级 Pixi8。
+历史alpha.5的本地379/379、完整strict、原测试和浏览器验收不代表正式图已验证；
+精确提交的正式CI及实际控件/帮助/图片输入验收见迁移PR。不宣称移动双触点或生产验收。
 
 PR previews use `pr/<number>/<run-id>/<attempt>/`. Vite and released COS Action v1.2.0 share the
 base URL; HTML reference checks and public upload verification use the action itself without an extra checker.
