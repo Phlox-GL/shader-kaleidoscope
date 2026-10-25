@@ -19,6 +19,8 @@ Map/Enum contracts; existing open state and rendering boundaries remain.
 历史alpha.5的本地379/379、完整strict、原测试和浏览器验收不代表正式图已验证；
 精确提交的正式CI及实际控件/帮助/图片输入验收见迁移PR。不宣称移动双触点或生产验收。
 
+后续边界清理移除两个事件到 `JsObject` 的多余强转：已发布 JS FFI 0.2.5 的 `object-field` 接受泛型输入并执行接收者检查，仍保留原字段、文件与字符串校验及错误路径；unsafe 从4降为2。剩余两处来自 FileReader / FontFaceObserver 构造的真实外部能力边界，不用额外适配层隐藏。命名 store 同时使用首选 `defref`，初值、类型和 watcher 不变。官方 Linux 0.30.1 的原状态测试、完整 strict、公开定义检查与构建通过，全部141个生成 JS 文件前后哈希一致；这不替代浏览器、图片选择或热重载验收。依赖、部署流程与 HUD 不改，不新增永久测试或校验脚本。
+
 PR previews use `pr/<number>/<run-id>/<attempt>/`. Vite and released COS Action v1.2.0 share the
 base URL; HTML reference checks and public upload verification use the action itself without an extra checker.
 Production prefixes and original server deployment paths remain unchanged.
