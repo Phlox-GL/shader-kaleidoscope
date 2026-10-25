@@ -268,9 +268,7 @@
         'ffi-event-file $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-event-file (event)
             let
-                target $ ffi/expect-object |event.target $ ffi/object-field |event
-                  unsafe-coerce event $ :: 'JsNullish 'JsObject
-                  , |target
+                target $ ffi/expect-object |event.target $ ffi/object-field |event event |target
                 files $ ffi/expect-object |event.target.files $ ffi/object-field |event.target target |files
               ffi/expect-object |event.target.files.0 $ ffi/object-field |event.target.files files |0
           :examples $ []
@@ -280,9 +278,7 @@
         'ffi-event-result $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-event-result (event)
             let
-                target $ ffi/expect-object |event.target $ ffi/object-field |event
-                  unsafe-coerce event $ :: 'JsNullish 'JsObject
-                  , |target
+                target $ ffi/expect-object |event.target $ ffi/object-field |event event |target
               ffi/expect-string |event.target.result $ ffi/object-field |event.target target |result
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'String)
@@ -450,7 +446,7 @@
     'app.store $ %{} 'FileEntry
       :defs $ {}
         '*store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *store schema/store
+          :code $ quote $ defref *store schema/store
           :examples $ []
           :schema $ :: 'Dynamic
         'dispatch! $ %{} 'CodeEntry (:doc |)
