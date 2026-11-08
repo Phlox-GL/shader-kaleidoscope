@@ -31,7 +31,7 @@ jobs:
         corepack prepare yarn@4.18.0 --activate
         yarn --version
     - name: Set up Calcit and Caps
-      uses: calcit-lang/setup-calcit@v1.5.0
+      uses: calcit-lang/setup-calcit@v1.5.1
       with:
         tools: calcit,caps
         caps-version: "0.1.1"
@@ -116,7 +116,7 @@ jobs:
         fi
     - name: Upload and verify static assets on COS
       if: steps.cos-credentials.outputs.available == 'true' && (github.event_name == 'pull_request' || steps.production.outputs.current == 'true')
-      uses: worktools/cos-upload-action@v1.2.0
+      uses: worktools/cos-upload-action@v1.3.0
       with:
         source-dir: dist
         bucket: ${{ secrets.COS_BUCKET }}

@@ -2,26 +2,12 @@
 
 Demo https://r.tiye.me/Phlox-GL/shader-kaleidoscope/
 
-Migration uses precisely paired formal Calcit/procs 0.30.1 with canonical `calcit.cirru` and `deps.cirru`;
-CI rejects retired `compact.cirru` and `package.cirru`. The default entry emits
-browser JavaScript. Config strings and operation arguments have explicit
-Map/Enum contracts; existing open state and rendering boundaries remain.
+使用配对的正式 Calcit 和 `@calcit/procs` 0.38.0，以及 Phlox 0.9.3、Respo 0.19.5。
+现有拖动手势、着色器和参数公式保持一致。帮助菜单和贴图载入后的重绘沿用原流程。
+绘图参数存放在具名状态中，着色器更新与界面操作通过 union 分开。
+Phlox 控件的内部游标仍通过现有的开放 Map 边界接收。
 
-本轮候选使用已发布正式 Phlox 0.7.16、Markdown 0.4.59、Respo UI 0.8.0、Respo
-0.16.124 和 js-ffi 0.2.5。绘图参数解码为 KaleidoscopeState，控件回调使用
-单 Enum dispatch，仍按原 cursor 写入 Map；着色器及参数公式不变。修复 nanoid
-未调用、旧 watch 名称、Unit 返回合同和 mount target 强转，DOM 查询使用 Respo
-已发布接口。修正错误字体名与空图片源默认纹理；图片上传等待实际解码成功后
-再重绘，删除固定 100ms 延时，避免黑屏直到下一次交互。
-9处内部 Option helper（含一处注释）迁为公开方法，保留原默认值和公式。
-`hud!` 页面错误/成功提示保留，不改成 `raise`；Pixi 同主版本更新到7.4.3，
-使用已修正的 `@pixi/assets` peer 元数据，不加 shim 或升级 Pixi8。
-历史alpha.5的本地379/379、完整strict、原测试和浏览器验收不代表正式图已验证；
-精确提交的正式CI及实际控件/帮助/图片输入验收见迁移PR。不宣称移动双触点或生产验收。
-
-后续边界清理移除两个事件到 `JsObject` 的多余强转：已发布 JS FFI 0.2.5 的 `object-field` 接受泛型输入并执行接收者检查，仍保留原字段、文件与字符串校验及错误路径；unsafe 从4降为2。剩余两处来自 FileReader / FontFaceObserver 构造的真实外部能力边界，不用额外适配层隐藏。命名 store 同时使用首选 `defref`，初值、类型和 watcher 不变。官方 Linux 0.30.1 的原状态测试、完整 strict、公开定义检查与构建通过，全部141个生成 JS 文件前后哈希一致；这不替代浏览器、图片选择或热重载验收。依赖、部署流程与 HUD 不改，不新增永久测试或校验脚本。
-
-PR previews use `pr/<number>/<run-id>/<attempt>/`. Vite and released COS Action v1.2.0 share the
+PR previews use `pr/<number>/<run-id>/<attempt>/`. Vite and released COS Action v1.3.0 share the
 base URL; HTML reference checks and public upload verification use the action itself without an extra checker.
 Production prefixes and original server deployment paths remain unchanged.
 Runs queue per PR and separately for production without cancellation. Before
@@ -63,6 +49,30 @@ Output videos:
 ### Workflow
 
 https://github.com/Phlox-GL/phlox-workflow
+
+<details>
+<summary>0.30.1 历史迁移记录</summary>
+
+Migration uses precisely paired formal Calcit/procs 0.30.1 with canonical `calcit.cirru` and `deps.cirru`;
+CI rejects retired `compact.cirru` and `package.cirru`. The default entry emits
+browser JavaScript. Config strings and operation arguments have explicit
+Map/Enum contracts; existing open state and rendering boundaries remain.
+
+本轮候选使用已发布正式 Phlox 0.7.16、Markdown 0.4.59、Respo UI 0.8.0、Respo
+0.16.124 和 js-ffi 0.2.5。绘图参数解码为 KaleidoscopeState，控件回调使用
+单 Enum dispatch，仍按原 cursor 写入 Map；着色器及参数公式不变。修复 nanoid
+未调用、旧 watch 名称、Unit 返回合同和 mount target 强转，DOM 查询使用 Respo
+已发布接口。修正错误字体名与空图片源默认纹理；图片上传等待实际解码成功后
+再重绘，删除固定 100ms 延时，避免黑屏直到下一次交互。
+9处内部 Option helper（含一处注释）迁为公开方法，保留原默认值和公式。
+`hud!` 页面错误/成功提示保留，不改成 `raise`；Pixi 同主版本更新到7.4.3，
+使用已修正的 `@pixi/assets` peer 元数据，不加 shim 或升级 Pixi8。
+历史alpha.5的本地379/379、完整strict、原测试和浏览器验收不代表正式图已验证；
+精确提交的正式CI及实际控件/帮助/图片输入验收见迁移PR。不宣称移动双触点或生产验收。
+
+后续边界清理移除两个事件到 `JsObject` 的多余强转：已发布 JS FFI 0.2.5 的 `object-field` 接受泛型输入并执行接收者检查，仍保留原字段、文件与字符串校验及错误路径；unsafe 从4降为2。剩余两处来自 FileReader / FontFaceObserver 构造的真实外部能力边界，不用额外适配层隐藏。命名 store 同时使用首选 `defref`，初值、类型和 watcher 不变。官方 Linux 0.30.1 的原状态测试、完整 strict、公开定义检查与构建通过，全部141个生成 JS 文件前后哈希一致；这不替代浏览器、图片选择或热重载验收。依赖、部署流程与 HUD 不改，不新增永久测试或校验脚本。
+
+</details>
 
 ### License
 

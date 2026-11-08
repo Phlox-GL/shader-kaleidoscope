@@ -1,8 +1,8 @@
 
-{} (:calcit-version |0.30.1)
+{} (:calcit-version |0.38.0)
   :version |0.4.11
-  :dependencies $ {} (|Phlox-GL/phlox |0.7.16)
-    |Respo/respo-markdown.calcit |0.4.59
-    |Respo/respo-ui.calcit |0.8.0
-    |Respo/respo.calcit |0.16.124
-    |calcit-lang/js-ffi |0.2.5
+  :dependencies $ {} (|Phlox-GL/phlox |0.9.3)
+    |Respo/respo-markdown.calcit |0.8.2
+    |Respo/respo-ui.calcit |0.15.2
+    |Respo/respo.calcit |0.19.5
+    |calcit-lang/js-ffi |0.2.13
