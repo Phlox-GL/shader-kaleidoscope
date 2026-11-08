@@ -77,7 +77,7 @@
                       :fraction 3
                       :on-change $ fn (value d!)
                         hint-fn $ Fn Number
-                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          Fn app.schema/SketchOp $ -> Unit
                           -> Unit
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :parts value
                         , &unit
@@ -89,7 +89,7 @@
                       :value $ :scale state
                       :on-change $ fn (value d!)
                         hint-fn $ Fn Number
-                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          Fn app.schema/SketchOp $ -> Unit
                           -> Unit
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :scale value
                         , &unit
@@ -101,7 +101,7 @@
                       :value $ :radius state
                       :on-change $ fn (value d!)
                         hint-fn $ Fn Number
-                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          Fn app.schema/SketchOp $ -> Unit
                           -> Unit
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :radius value
                         , &unit
@@ -113,7 +113,7 @@
                       :value $ :regress state
                       :on-change $ fn (value d!)
                         hint-fn $ Fn Number
-                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          Fn app.schema/SketchOp $ -> Unit
                           -> Unit
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :regress value
                         , &unit
@@ -125,7 +125,7 @@
                       :value $ :move-x state
                       :on-change $ fn (value d!)
                         hint-fn $ Fn Number
-                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          Fn app.schema/SketchOp $ -> Unit
                           -> Unit
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :move-x value
                         , &unit
@@ -137,7 +137,7 @@
                       :value $ :skip state
                       :on-change $ fn (value d!)
                         hint-fn $ Fn Number
-                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          Fn app.schema/SketchOp $ -> Unit
                           -> Unit
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :skip value
                         , &unit
@@ -149,13 +149,13 @@
                       :value $ :spin state
                       :on-change $ fn (value d!)
                         hint-fn $ Fn Number
-                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          Fn app.schema/SketchOp $ -> Unit
                           -> Unit
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :spin value
                         , &unit
                       :on-move $ fn (pos d!)
                         hint-fn $ Fn (List Number)
-                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          Fn app.schema/SketchOp $ -> Unit
                           -> Unit
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :spin-position pos
                         , &unit
@@ -167,13 +167,13 @@
                       :value $ :shape-spin state
                       :on-change $ fn (value d!)
                         hint-fn $ Fn Number
-                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          Fn app.schema/SketchOp $ -> Unit
                           -> Unit
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :shape-spin value
                         , &unit
                       :on-move $ fn (pos d!)
                         hint-fn $ Fn (List Number)
-                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          Fn app.schema/SketchOp $ -> Unit
                           -> Unit
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :shape-spin-position pos
                         , &unit
@@ -185,7 +185,7 @@
                       :hide-text? true
                       :on-change $ fn (position d!)
                         hint-fn $ Fn (List Number)
-                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          Fn app.schema/SketchOp $ -> Unit
                           -> Unit
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :shift position
                         , &unit
@@ -248,7 +248,7 @@
                   button $ {} (:inner-text "|Usages(用法)") (:style ui/button)
                     :on-click $ fn (e d!)
                       hint-fn $ Fn respo.schema/RespoEvent
-                        Fn AnyEnum (-> Unit) (:open :reflect)
+                        Fn app.schema/UiOp $ -> Unit
                         -> Unit
                         :features :js-ffi
                       d! $ app.schema/UiOp :toggle-help
@@ -259,7 +259,7 @@
                     :accept "|image/apng, image/avif, image/gif, image/jpeg, image/png, image/svg+xml, image/webp"
                     :on-change $ fn (e d!)
                       hint-fn $ Fn respo.schema/RespoEvent
-                        Fn AnyEnum (-> Unit) (:open :reflect)
+                        Fn app.schema/UiOp $ -> Unit
                         -> Unit
                         :features :js-ffi
                       let
