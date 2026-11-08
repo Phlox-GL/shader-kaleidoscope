@@ -6,27 +6,21 @@
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |phlox/ |touch-control/ |respo-markdown.calcit/ |js-ffi/
-      :type-slots $ {}
+      :type-slots $ {} $ :dispatch-op 'app.schema/ViewDispatch
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {} $ 'comp-container
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-container (store)
-            ; println |Store store $ .unwrap-or (get store :tab) nil
-            let
-                cursor $ []
-                states $ decode-map-as
-                  .unwrap $ get store :states
-                  :: 'Map 'Tag 'Dynamic
-                tab $ either
-                  .unwrap-or (get store :tab) nil
-                  , :kaleidoscope
-              container
-                {} $ :position $ [] -200 -100
-                comp-kaleidoscope $ decode-map-as (>> states :kaleidoscope) (:: 'Map 'Tag 'Dynamic)
+            container
+              {} $ :position $ [] -200 -100
+              comp-kaleidoscope
+                decode-map-as
+                  >> (:controls store) :kaleidoscope
+                  Map Tag Dynamic
+                :sketch store
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Fn app.schema/Store (-> phlox.schema/PhloxElement)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require
@@ -38,24 +32,8 @@
     'app.comp.kaleidoscope $ %{} 'FileEntry
       :defs $ {}
         'comp-kaleidoscope $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn comp-kaleidoscope (states)
+          :code $ quote $ defn comp-kaleidoscope (states state)
             let
-                cursor $ decode-map-as
-                  .unwrap $ get states :cursor
-                  :: 'List 'Dynamic
-                state $ decode-map-as
-                  or
-                    .unwrap-or (get states :data) nil
-                    {} (:n 1) (:scale 0.5) (:parts 2.5) (:radius 0.4) (:regress 1)
-                      :rotate $ noted "|bad name, it's skewing and ratating the reflection" 0
-                      :spin $ noted "|rotate background image" 0
-                      :shape-spin $ noted "|rotate whole scene" 0
-                      :move-x $ noted "|move shape horizontally" 0
-                      :shift $ [] 100 100
-                      :spin-position $ [] 200 -240
-                      :shape-spin-position $ [] 200 -120
-                      :skip 0
-                  , 'app.schema/KaleidoscopeState
                 shift $ :shift state
               group ({})
                 mesh $ {}
@@ -98,7 +76,11 @@
                       :value $ :parts state
                       :fraction 3
                       :on-change $ fn (value d!)
-                        d! $ :: :states cursor $ assoc (&struct:to-map state) :parts value
+                        hint-fn $ Fn Number
+                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          -> Unit
+                        d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :parts value
+                        , &unit
                   comp-slider (>> states :scale)
                     {} (:title |scale) (:unit 0.01) (:min 0.2) (:max 5.0)
                       :position $ [] 0 -160
@@ -106,7 +88,11 @@
                       :color $ hslx 200 90 30
                       :value $ :scale state
                       :on-change $ fn (value d!)
-                        d! $ :: :states cursor $ assoc (&struct:to-map state) :scale value
+                        hint-fn $ Fn Number
+                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          -> Unit
+                        d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :scale value
+                        , &unit
                   comp-slider (>> states :radius)
                     {} (:title |radius) (:unit 0.01) (:min 0.02) (:max 2)
                       :position $ [] 0 -100
@@ -114,7 +100,11 @@
                       :color $ hslx 200 90 30
                       :value $ :radius state
                       :on-change $ fn (value d!)
-                        d! $ :: :states cursor $ assoc (&struct:to-map state) :radius value
+                        hint-fn $ Fn Number
+                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          -> Unit
+                        d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :radius value
+                        , &unit
                   comp-slider (>> states :regress)
                     {} (:title |regress) (:unit 0.01) (:min 0.2) (:max 2)
                       :position $ [] 0 -40
@@ -122,7 +112,11 @@
                       :color $ hslx 200 60 90
                       :value $ :regress state
                       :on-change $ fn (value d!)
-                        d! $ :: :states cursor $ assoc (&struct:to-map state) :regress value
+                        hint-fn $ Fn Number
+                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          -> Unit
+                        d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :regress value
+                        , &unit
                   comp-slider (>> states :move-x)
                     {} (:title |move-x) (:unit 1)
                       :position $ [] 0 20
@@ -130,7 +124,11 @@
                       :color $ hslx 200 60 90
                       :value $ :move-x state
                       :on-change $ fn (value d!)
-                        d! $ :: :states cursor $ assoc (&struct:to-map state) :move-x value
+                        hint-fn $ Fn Number
+                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          -> Unit
+                        d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :move-x value
+                        , &unit
                   comp-slider-point (>> states :skip)
                     {} (:title |toss) (:unit 0.001) (:min -0.2) (:max 0.2)
                       :position $ [] 0 80
@@ -138,7 +136,11 @@
                       :color $ hslx 200 60 90
                       :value $ :skip state
                       :on-change $ fn (value d!)
-                        d! $ :: :states cursor $ assoc (&struct:to-map state) :skip value
+                        hint-fn $ Fn Number
+                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          -> Unit
+                        d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :skip value
+                        , &unit
                   comp-spin-slider (>> states :spin)
                     {} (:unit 1) (:min 0) (:max nil) (:fraction 1) (:label "|Texture spin")
                       :position $ :spin-position state
@@ -146,9 +148,17 @@
                       ; :color $ hslx 200 90 30
                       :value $ :spin state
                       :on-change $ fn (value d!)
-                        d! $ :: :states cursor $ assoc (&struct:to-map state) :spin value
+                        hint-fn $ Fn Number
+                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          -> Unit
+                        d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :spin value
+                        , &unit
                       :on-move $ fn (pos d!)
-                        d! $ :: :states cursor $ assoc (&struct:to-map state) :spin-position pos
+                        hint-fn $ Fn (List Number)
+                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          -> Unit
+                        d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :spin-position pos
+                        , &unit
                   comp-spin-slider (>> states :shape-spin)
                     {} (:unit 0.5) (:min 0) (:max nil) (:fraction 1) (:label "|Shape spin")
                       :position $ :shape-spin-position state
@@ -156,9 +166,17 @@
                       ; :color $ hslx 200 90 30
                       :value $ :shape-spin state
                       :on-change $ fn (value d!)
-                        d! $ :: :states cursor $ assoc (&struct:to-map state) :shape-spin value
+                        hint-fn $ Fn Number
+                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          -> Unit
+                        d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :shape-spin value
+                        , &unit
                       :on-move $ fn (pos d!)
-                        d! $ :: :states cursor $ assoc (&struct:to-map state) :shape-spin-position pos
+                        hint-fn $ Fn (List Number)
+                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          -> Unit
+                        d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :shape-spin-position pos
+                        , &unit
                   comp-drag-point (>> states :p3)
                     {} (:position shift) (:unit 0.5) (:radius 12)
                       :fill $ hslx 30 90 80
@@ -166,28 +184,26 @@
                       :alpha 1
                       :hide-text? true
                       :on-change $ fn (position d!)
-                        d! $ :: :states cursor $ assoc (&struct:to-map state) :shift position
+                        hint-fn $ Fn (List Number)
+                          Fn AnyEnum (-> Unit) (:open :reflect)
+                          -> Unit
+                        d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :shift position
+                        , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Tag Dynamic) app.schema/KaleidoscopeState (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'create-file-image $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn create-file-image () (browser/image-create)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'js-ffi.browser/ImageHost)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> js-ffi.browser/ImageHost) (:features :js-ffi)
         'file-image $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def file-image (create-file-image)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ quote js-ffi.browser/ImageHost
         'file-image-src $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn file-image-src ()
             ffi/expect-string |file-image.src $ ffi/object-field |file-image file-image |src
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'String)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> String) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.kaleidoscope
           :require
@@ -205,12 +221,10 @@
       :defs $ {}
         'FileReaderHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait FileReaderHost (:onload 'Dynamic) (:onerror 'Dynamic)
-            .readAsDataURL $ :: 'Fn $ {}
-              :args $ [] 'FileReaderHost 'JsObject
-              :return 'Dynamic
+            .readAsDataURL $ Fn FileReaderHost JsObject $ -> Dynamic
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
-          :schema $ :: 'Trait
+          :schema $ quote Trait
         'comp-help-menu $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-help-menu ()
             div
@@ -218,13 +232,12 @@
               div
                 {} $ :style $ {} (:overflow :auto) (:height |100%) (:padding 16)
                 comp-md-block (inline-file |README.md) ({})
-                =< nil 120
+                respo.comp.space/space-y 120
               span $ {} (:class-name style-close) (:inner-text "|✕")
                 :on-click $ fn (e d!)
-                  d! $ :: :toggle-help
+                  d! $ app.schema/UiOp :toggle-help
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ []
+          :schema $ quote $ Fn (-> respo.schema/Component)
         'comp-navbar $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-navbar (store)
             div
@@ -234,37 +247,44 @@
                 div ({})
                   button $ {} (:inner-text "|Usages(用法)") (:style ui/button)
                     :on-click $ fn (e d!)
-                      d! $ :: :toggle-help
-                =< nil 6
+                      hint-fn $ Fn respo.schema/RespoEvent
+                        Fn AnyEnum (-> Unit) (:open :reflect)
+                        -> Unit
+                        :features :js-ffi
+                      d! $ app.schema/UiOp :toggle-help
+                      , &unit
+                respo.comp.space/space-y 6
                 div ({})
                   input $ {} (:type |file)
                     :accept "|image/apng, image/avif, image/gif, image/jpeg, image/png, image/svg+xml, image/webp"
                     :on-change $ fn (e d!)
+                      hint-fn $ Fn respo.schema/RespoEvent
+                        Fn AnyEnum (-> Unit) (:open :reflect)
+                        -> Unit
+                        :features :js-ffi
                       let
-                          event $ .unwrap-or (get e :event) nil
+                          event $ :event e
                         let
                             file $ ffi-event-file event
                             reader $ unsafe-coerce (new js/FileReader) FileReaderHost
                           set! (.-onload reader)
-                            fn (e)
-                              hint-fn $ {} $ :async true
+                            fn (e) (hint-fn Async)
                               browser/image-src! file-image $ ffi-event-result e
                               match
                                 js-await $ browser/image-decode! file-image
                                 (:ok _)
-                                  d! $ :: :touch
+                                  d! $ app.schema/UiOp :touch
                                 (:err error) (js/console.error |Failed-to-decode-image error)
                               , &unit
                           set! (.-onerror reader)
                             fn (e) (js/console.error "|Failed to load image" e)
                           .!readAsDataURL reader file
-                if
-                  .unwrap-or (get store :show-help?) nil
-                  comp-help-menu
+                      , &unit
+                if (:show-help? store)
+                  Option :some $ comp-help-menu
+                  Option :none
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn app.schema/Store (-> respo.schema/Component) (:features :js-ffi)
         'ffi-event-file $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-event-file (event)
             let
@@ -272,26 +292,21 @@
                 files $ ffi/expect-object |event.target.files $ ffi/object-field |event.target target |files
               ffi/expect-object |event.target.files.0 $ ffi/object-field |event.target.files files |0
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'JsObject)
-            :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Dynamic (-> JsObject) (:features :js-ffi)
         'ffi-event-result $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-event-result (event)
             let
                 target $ ffi/expect-object |event.target $ ffi/object-field |event event |target
               ffi/expect-string |event.target.result $ ffi/object-field |event.target target |result
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'String)
-            :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Dynamic (-> String) (:features :js-ffi)
         'inline-file $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defmacro inline-file (path)
             read-file $ str path
           :examples $ []
-          :schema $ :: 'Macro $ {}
-            :capabilities $ #{} :fs-read
-            :expansion $ :: 'Expr 'String
-            :required $ [] $ :: 'Expr 'String
+          :schema $ quote $ Macro (Expr String)
+            -> $ Expr String
+            :capabilities :fs-read
         'style-close $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-close
             {}
@@ -299,19 +314,19 @@
               |$0:hover $ {} $ :opacity 1
               |$0:active $ {} $ :transform "|scale(1.2)"
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ quote Dynamic
         'style-menu $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-menu
             {} (:position :fixed) (:bottom 40) (:border-radius |4px) (:right 8) (:width |60vw) (:height |70%)
               :background $ hsl 0 0 100 $ Option :some 0.94
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ quote Dynamic
         'style-navbar $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-navbar
             merge ui/global $ {} (:position :absolute) (:bottom 0) (:right 0) (:border-radius |4px) (:padding "|8px 8px") (:max-width 240)
               :background-color $ hsl 0 0 100 $ Option :some 0.6
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ quote Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.navbar
           :require
@@ -330,59 +345,46 @@
           :code $ quote $ defmacro inline-shader (name)
             read-file $ str |shaders/ name
           :examples $ []
-          :schema $ :: 'Macro $ {}
-            :capabilities $ #{} :fs-read
-            :expansion $ :: 'Expr 'String
-            :required $ [] $ :: 'Expr 'String
+          :schema $ quote $ Macro (Expr String)
+            -> $ Expr String
+            :capabilities :fs-read
         'site $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def site
             {} (:dev-ui |http://localhost:8100/main.css) (:release-ui |http://cdn.tiye.me/favored-fonts/main.css) (:cdn-url |http://cdn.tiye.me/phlox/) (:title |Phlox) (:icon |http://cdn.tiye.me/logo/quamolit.png) (:storage-key |phlox)
           :examples $ []
-          :schema $ :: 'Map 'Tag 'String
+          :schema $ quote $ Map Tag String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.config
           :require $ |mobile-detect :default mobile-detect
     'app.main $ %{} 'FileEntry
       :defs $ {}
-        'FontFaceObserverHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait FontFaceObserverHost
-            .load $ :: 'Fn $ {}
-              :args $ [] 'FontFaceObserverHost
-              :return 'Dynamic
-          :examples $ []
-          :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
-          :schema $ :: 'Trait
         'detect-mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn detect-mount-target ()
             .unwrap $ dom/query-selector |.dom-app
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.dom/DomElement)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> respo.dom/DomElement) (:features :js-ffi)
         'load-font! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn load-font! ()
-            .!load $ unsafe-coerce (new FontFaceObserver "|Josefin Sans") FontFaceObserverHost
+            phlox.core/ffi-load-font $ new FontFaceObserver "|Josefin Sans"
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> phlox.core/PromiseHost) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (; js/console.log PIXI)
             if dev? $ load-console-formatter!
             -> (load-font!)
               phlox.core/ffi-then $ fn (event) (render-app!)
-                flipped js/setTimeout 200 $ fn () $ dispatch! (:: :touch)
+                js/setTimeout
+                  fn () $ dispatch! $ app.schema/UiOp :touch
+                  , 200
             add-watch! *store :change $ fn (store prev) (render-app!)
             when mobile? (render-control!) (start-control-loop! 8 on-control-event)
             println "||App Started"
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def mount-target (detect-mount-target)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ quote respo.dom/DomElement
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (nil? build-errors)
@@ -394,18 +396,15 @@
               hud! |error build-errors
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
+          :schema $ quote $ Fn (-> Unit)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            respo/render! mount-target (comp-navbar @*store)
-              fn (raw-op)
-                if (enum? raw-op) (dispatch! raw-op) (raise |Expected-operation-enum)
-                , &unit
-            render! (comp-container @*store) dispatch! $ {}
+            respo/render-with! mount-target
+              fn () $ comp-navbar @*store
+              , app.store/dispatch-view!
+            render! (comp-container @*store) app.store/dispatch-view! $ {}
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require (|pixi.js :as PIXI)
@@ -413,7 +412,6 @@
             app.comp.container :refer $ comp-container
             app.schema :as schema
             phlox.config :refer $ dev? mobile?
-            |nanoid :refer $ nanoid
             app.updater :refer $ updater
             |fontfaceobserver-es :default FontFaceObserver
             |./calcit.build-errors :default build-errors
@@ -426,21 +424,52 @@
     'app.schema $ %{} 'FileEntry
       :defs $ {}
         'KaleidoscopeState $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct KaleidoscopeState (:n 'Number) (:scale 'Number) (:parts 'Number) (:radius 'Number) (:regress 'Number) (:rotate 'Number) (:spin 'Number) (:shape-spin 'Number) (:move-x 'Number) (:skip 'Number)
-            :shift $ :: 'List 'Number
-            :spin-position $ :: 'List 'Number
-            :shape-spin-position $ :: 'List 'Number
+          :code $ quote $ defstruct KaleidoscopeState (:n Number) (:scale Number) (:parts Number) (:radius Number) (:regress Number) (:rotate Number) (:spin Number) (:shape-spin Number) (:move-x Number) (:skip Number)
+            :shift $ List Number
+            :spin-position $ List Number
+            :shape-spin-position $ List Number
           :examples $ []
-          :schema $ :: 'StructDef
+          :schema $ quote StructDef
+        'Op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion Op SketchOp UiOp
+          :examples $ []
+          :schema $ quote UnionDef
+        'SketchOp $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum SketchOp (:set-sketch app.schema/KaleidoscopeState)
+          :examples $ []
+          :schema $ quote EnumDef
+        'Store $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct Store
+            :controls $ Map Tag Dynamic
+            :sketch app.schema/KaleidoscopeState
+            :n Number
+            :show-help? Bool
+          :examples $ []
+          :schema $ quote StructDef
+        'UiOp $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum UiOp
+            :states (List respo.schema/CoordKey) Dynamic
+            :touch
+            :toggle-help
+          :examples $ []
+          :schema $ quote EnumDef
+        'ViewDispatch $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def ViewDispatch
+            :: :states ([]) nil
+          :examples $ []
+          :schema $ quote AnyEnum
+        'initial-sketch $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def initial-sketch
+            KaleidoscopeState :n 1 :scale 0.5 :parts 2.5 :radius 0.4 :regress 1 :rotate
+              noted "|bad name, it's skewing and ratating the reflection" 0
+              , :spin (noted "|rotate background image" 0) :shape-spin (noted "|rotate whole scene" 0) :move-x (noted "|move shape horizontally" 0) :shift ([] 100 100) :spin-position ([] 200 -240) :shape-spin-position ([] 200 -120) :skip 0
+          :examples $ []
+          :schema $ quote app.schema/KaleidoscopeState
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
-            {}
-              :states $ {}
-              :cursor $ []
-              :n 0
-              :show-help? false
+            Store :controls ({}) :sketch initial-sketch :n 0 :show-help? false
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ quote app.schema/Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.store $ %{} 'FileEntry
@@ -448,78 +477,74 @@
         '*store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *store schema/store
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ quote $ Ref app.schema/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
-            when
-              and dev? $ match op
-                (:states cursor state) false
-                _ true
-              println |dispatch! op
-            let
-                op-id $ decode-map-as (nanoid) 'String
-                op-time $ decode-map-as (js/Date.now) 'Number
-              reset! *store $ updater @*store op op-id op-time
+            reset! *store $ updater @*store op
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Enum
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn app.schema/Op (-> Unit)
+        'dispatch-view! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn dispatch-view! (raw)
+            let
+                kind $ enum-definition raw
+              cond
+                  = kind $ Option :some app.schema/SketchOp
+                  dispatch! $ decode-map-as raw 'app.schema/SketchOp
+                (= kind (Option :some app.schema/UiOp))
+                  dispatch! $ decode-map-as raw 'app.schema/UiOp
+                true $ match raw
+                  (:states cursor value)
+                    dispatch! $ app.schema/UiOp :states
+                      decode-map-as cursor $ List respo.schema/CoordKey
+                      , value
+                  _ $ do (eprintln "|Unknown rendering operation" raw) &unit
+            , &unit
+          :examples $ []
+          :schema $ quote $ Fn AnyEnum (-> Unit) (:open :reflect)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.store
           :require
             app.updater :refer $ updater
             app.schema :as schema
             phlox.config :refer $ dev? mobile?
-            |nanoid :refer $ nanoid
     'app.updater $ %{} 'FileEntry
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn updater (store op op-id op-time)
+          :code $ quote $ defn updater (store op)
             match op
-              (:touch)
-                assoc store :n $ inc $ decode-map-as
-                  .unwrap-or (get store :n) 0
-                  , 'Number
-              (:states cursor s)
-                update-states store
-                  decode-map-as cursor $ :: 'List 'Dynamic
-                  , s
-              (:toggle-help)
-                assoc store :show-help? $ not $ decode-map-as
-                  .unwrap-or (get store :show-help?) false
-                  , 'Bool
-              (:hydrate-storage op-data)
-                decode-map-as op-data $ :: 'Map 'Tag 'Dynamic
-              _ $ do (eprintln |unknown op op) store
+              (app.schema/SketchOp drawing)
+                match drawing $
+                  :set-sketch state
+                  &struct:assoc store :sketch state
+              (app.schema/UiOp ui-op)
+                match ui-op
+                  (:touch)
+                    &struct:assoc store :n $ inc $ :n store
+                  (:toggle-help)
+                    &struct:assoc store :show-help? $ not $ :show-help? store
+                  (:states cursor data)
+                    &struct:assoc store :controls $ decode-map-as
+                      .unwrap $ get
+                        update-states
+                          {} $ :states $ :controls store
+                          , cursor data
+                        , :states
+                      Map Tag Dynamic
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Enum 'String 'Number
-            :features $ #{} :js-ffi
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Fn app.schema/Store app.schema/Op (-> app.schema/Store)
           :tests $ [] $ %{} 'TestEntry (:name |routes-controls-and-help)
             :code $ quote $ let
-                initial $ {}
-                  :states $ {}
-                  :n 0
-                  :show-help? false
-                changed $ updater initial
-                  :: :states ([] :kaleidoscope)
-                    {} $ :scale 0.9
-                  , |id 1
+                initial app.schema/store
+                changed $ updater initial $ app.schema/SketchOp :set-sketch (&struct:assoc app.schema/initial-sketch :scale 0.9)
+                controls $ updater changed $ app.schema/UiOp :states ([] :kaleidoscope)
+                  {} $ :scale 0.9
+              assert= 0.9 $ :scale $ :sketch changed
               assert=
-                {} $ :scale 0.9
-                .unwrap $ get
-                  .unwrap $ get
-                    .unwrap $ get changed :states
-                    , :kaleidoscope
-                  , :data
-              assert= true $ .unwrap $ get
-                updater changed (:: :toggle-help) |id 2
-                , :show-help?
-              assert= 1 $ .unwrap $ get
-                updater changed (:: :touch) |id 3
-                , :n
+                Result :ok $ {} $ :scale 0.9
+                get-in (:controls controls) ([] :kaleidoscope :data)
+              assert= true $ :show-help? $ updater changed (app.schema/UiOp :toggle-help)
+              assert= 1 $ :n $ updater changed (app.schema/UiOp :touch)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require $ phlox.cursor :refer $ update-states
