@@ -423,6 +423,11 @@
             respo.ffi.browser :as dom
     'app.schema $ %{} 'FileEntry
       :defs $ {}
+        'ControlNode $ %{} 'CodeEntry
+          :doc "|A pointer value or a nested branch of the Phlox control tree."
+          :code $ quote $ defunion ControlNode WidgetValue (Map respo.schema/CoordKey ControlNode)
+          :examples $ []
+          :schema $ quote UnionDef
         'KaleidoscopeState $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct KaleidoscopeState (:n Number) (:scale Number) (:parts Number) (:radius Number) (:regress Number) (:rotate Number) (:spin Number) (:shape-spin Number) (:move-x Number) (:skip Number)
             :shift $ List Number
@@ -440,7 +445,7 @@
           :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
-            :controls $ Map Tag Dynamic
+            :controls $ Map respo.schema/CoordKey ControlNode
             :sketch app.schema/KaleidoscopeState
             :n Number
             :show-help? Bool
@@ -448,7 +453,7 @@
           :schema $ quote StructDef
         'UiOp $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum UiOp
-            :states (List respo.schema/CoordKey) Dynamic
+            :states (List respo.schema/CoordKey) (Map Tag WidgetValue)
             :touch
             :toggle-help
           :examples $ []
@@ -458,6 +463,11 @@
             :: :states ([]) nil
           :examples $ []
           :schema $ quote AnyEnum
+        'WidgetValue $ %{} 'CodeEntry
+          :doc "|State fields emitted by the supported Phlox sliders and drag points."
+          :code $ quote $ defunion WidgetValue Bool Number (List Number)
+          :examples $ []
+          :schema $ quote UnionDef
         'initial-sketch $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def initial-sketch
             KaleidoscopeState :n 1 :scale 0.5 :parts 2.5 :radius 0.4 :regress 1 :rotate
@@ -497,7 +507,7 @@
                   (:states cursor value)
                     dispatch! $ app.schema/UiOp :states
                       decode-map-as cursor $ List respo.schema/CoordKey
-                      , value
+                      decode-map-as value $ Map Tag app.schema/WidgetValue
                   _ $ do (eprintln "|Unknown rendering operation" raw) &unit
             , &unit
           :examples $ []
@@ -525,12 +535,8 @@
                     &struct:assoc store :show-help? $ not $ :show-help? store
                   (:states cursor data)
                     &struct:assoc store :controls $ decode-map-as
-                      .unwrap $ get
-                        update-states
-                          {} $ :states $ :controls store
-                          , cursor data
-                        , :states
-                      Map Tag Dynamic
+                      assoc-in (:controls store) (conj cursor :data) data
+                      Map respo.schema/CoordKey app.schema/ControlNode
           :examples $ []
           :schema $ quote $ Fn app.schema/Store app.schema/Op (-> app.schema/Store)
           :tests $ [] $ %{} 'TestEntry (:name |routes-controls-and-help)
@@ -539,12 +545,23 @@
                 changed $ updater initial $ app.schema/SketchOp :set-sketch (&struct:assoc app.schema/initial-sketch :scale 0.9)
                 controls $ updater changed $ app.schema/UiOp :states ([] :kaleidoscope)
                   {} $ :scale 0.9
+                nested $ updater controls $ app.schema/UiOp :states ([] :kaleidoscope :spin :move)
+                  {} (:dragging? true)
+                    :x0 $ [] 10 20
+              assert= 0.9 $ :scale $ :sketch nested
+              assert=
+                {} $ :kaleidoscope $ {}
+                  :data $ {} $ :scale 0.9
+                  :spin $ {} $ :move
+                    {} $ :data $ {} (:dragging? true)
+                      :x0 $ [] 10 20
+                :controls nested
               assert= 0.9 $ :scale $ :sketch changed
               assert=
-                Result :ok $ {} $ :scale 0.9
-                get-in (:controls controls) ([] :kaleidoscope :data)
+                {} $ :kaleidoscope $ {}
+                  :data $ {} $ :scale 0.9
+                :controls controls
               assert= true $ :show-help? $ updater changed (app.schema/UiOp :toggle-help)
               assert= 1 $ :n $ updater changed (app.schema/UiOp :touch)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
-          :require $ phlox.cursor :refer $ update-states
