@@ -1,5 +1,5 @@
 
-{} (:calcit-version |0.38.0)
+{} (:calcit-version |0.40.0)
   :version |0.4.11
   :dependencies $ {} (|Phlox-GL/phlox |0.9.3)
     |Respo/respo-markdown.calcit |0.8.2
