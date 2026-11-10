@@ -314,19 +314,19 @@
               |$0:hover $ {} $ :opacity 1
               |$0:active $ {} $ :transform "|scale(1.2)"
           :examples $ []
-          :schema $ quote Dynamic
+          :schema $ quote $ Map String (Map Tag respo.schema/CssValue)
         'style-menu $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-menu
             {} (:position :fixed) (:bottom 40) (:border-radius |4px) (:right 8) (:width |60vw) (:height |70%)
               :background $ hsl 0 0 100 $ Option :some 0.94
           :examples $ []
-          :schema $ quote Dynamic
+          :schema $ quote $ Map Tag respo.schema/CssValue
         'style-navbar $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-navbar
             merge ui/global $ {} (:position :absolute) (:bottom 0) (:right 0) (:border-radius |4px) (:padding "|8px 8px") (:max-width 240)
               :background-color $ hsl 0 0 100 $ Option :some 0.6
           :examples $ []
-          :schema $ quote Dynamic
+          :schema $ quote $ Map Tag respo-ui.schema/StyleValue
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.navbar
           :require
