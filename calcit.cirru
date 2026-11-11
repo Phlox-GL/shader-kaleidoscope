@@ -6,7 +6,7 @@
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |phlox/ |touch-control/ |respo-markdown.calcit/ |js-ffi/
-      :type-slots $ {} $ :dispatch-op 'app.schema/ViewDispatch
+      :type-slots $ {} $ :dispatch-op 'app.schema/UiOp
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {} $ 'comp-container
@@ -194,11 +194,11 @@
         'create-file-image $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn create-file-image () (browser/image-create)
           :examples $ []
-          :schema $ quote $ Fn (-> js-ffi.browser/ImageHost) (:features :js-ffi)
+          :schema $ quote $ Fn (-> browser/ImageHost) (:features :js-ffi)
         'file-image $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def file-image (create-file-image)
           :examples $ []
-          :schema $ quote js-ffi.browser/ImageHost
+          :schema $ quote browser/ImageHost
         'file-image-src $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn file-image-src ()
             ffi/expect-string |file-image.src $ ffi/object-field |file-image file-image |src
@@ -281,8 +281,8 @@
                           .!readAsDataURL reader file
                       , &unit
                 if (:show-help? store)
-                  Option :some $ comp-help-menu
-                  Option :none
+                  Some $ comp-help-menu
+                  , None
           :examples $ []
           :schema $ quote $ Fn app.schema/Store (-> respo.schema/Component) (:features :js-ffi)
         'ffi-event-file $ %{} 'CodeEntry (:doc |)
@@ -318,13 +318,13 @@
         'style-menu $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-menu
             {} (:position :fixed) (:bottom 40) (:border-radius |4px) (:right 8) (:width |60vw) (:height |70%)
-              :background $ hsl 0 0 100 $ Option :some 0.94
+              :background $ hsl 0 0 100 $ Some 0.94
           :examples $ []
           :schema $ quote $ Map Tag respo.schema/CssValue
         'style-navbar $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-navbar
             merge ui/global $ {} (:position :absolute) (:bottom 0) (:right 0) (:border-radius |4px) (:padding "|8px 8px") (:max-width 240)
-              :background-color $ hsl 0 0 100 $ Option :some 0.6
+              :background-color $ hsl 0 0 100 $ Some 0.6
           :examples $ []
           :schema $ quote $ Map Tag respo-ui.schema/StyleValue
       :ns $ %{} 'NsEntry (:doc |)
@@ -401,8 +401,10 @@
           :code $ quote $ defn render-app! ()
             respo/render-with! mount-target
               fn () $ comp-navbar @*store
-              , app.store/dispatch-view!
-            render! (comp-container @*store) app.store/dispatch-view! $ {}
+              fn (op)
+                hint-fn $ Fn app.schema/UiOp $ -> Unit
+                dispatch! op
+            render! (comp-container @*store) app.store/dispatch-phlox! $ {}
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
@@ -458,11 +460,6 @@
             :toggle-help
           :examples $ []
           :schema $ quote EnumDef
-        'ViewDispatch $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def ViewDispatch
-            :: :states ([]) nil
-          :examples $ []
-          :schema $ quote AnyEnum
         'WidgetValue $ %{} 'CodeEntry
           :doc "|State fields emitted by the supported Phlox sliders and drag points."
           :code $ quote $ defunion WidgetValue Bool Number (List Number)
@@ -474,12 +471,12 @@
               noted "|bad name, it's skewing and ratating the reflection" 0
               , :spin (noted "|rotate background image" 0) :shape-spin (noted "|rotate whole scene" 0) :move-x (noted "|move shape horizontally" 0) :shift ([] 100 100) :spin-position ([] 200 -240) :shape-spin-position ([] 200 -120) :skip 0
           :examples $ []
-          :schema $ quote app.schema/KaleidoscopeState
+          :schema $ quote KaleidoscopeState
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :controls ({}) :sketch initial-sketch :n 0 :show-help? false
           :examples $ []
-          :schema $ quote app.schema/Store
+          :schema $ quote Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.store $ %{} 'FileEntry
@@ -487,21 +484,21 @@
         '*store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *store schema/store
           :examples $ []
-          :schema $ quote $ Ref app.schema/Store
+          :schema $ quote $ Ref schema/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             reset! *store $ updater @*store op
             , &unit
           :examples $ []
-          :schema $ quote $ Fn app.schema/Op (-> Unit)
-        'dispatch-view! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn dispatch-view! (raw)
+          :schema $ quote $ Fn schema/Op (-> Unit)
+        'dispatch-phlox! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn dispatch-phlox! (raw)
             let
                 kind $ enum-definition raw
               cond
-                  = kind $ Option :some app.schema/SketchOp
+                  = kind $ Some app.schema/SketchOp
                   dispatch! $ decode-map-as raw 'app.schema/SketchOp
-                (= kind (Option :some app.schema/UiOp))
+                (= kind (Some app.schema/UiOp))
                   dispatch! $ decode-map-as raw 'app.schema/UiOp
                 true $ match raw
                   (:states cursor value)
