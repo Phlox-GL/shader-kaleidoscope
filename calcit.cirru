@@ -220,8 +220,10 @@
     'app.comp.navbar $ %{} 'FileEntry
       :defs $ {}
         'FileReaderHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait FileReaderHost (:onload 'Dynamic) (:onerror 'Dynamic)
-            .readAsDataURL $ Fn FileReaderHost JsObject $ -> Dynamic
+          :code $ quote $ deftrait FileReaderHost
+            :onload $ JsNullish $ Fn JsObject (-> Unit) (:async)
+            :onerror $ JsNullish $ Fn JsObject (-> Unit)
+            .readAsDataURL $ Fn FileReaderHost JsObject $ -> Unit
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
           :schema $ quote Trait
@@ -268,7 +270,8 @@
                             file $ ffi-event-file event
                             reader $ unsafe-coerce (new js/FileReader) FileReaderHost
                           set! (.-onload reader)
-                            fn (e) (hint-fn Async)
+                            fn (e)
+                              hint-fn $ Fn JsObject (-> Unit) (:features :js-ffi) (:async)
                               browser/image-src! file-image $ ffi-event-result e
                               match
                                 js-await $ browser/image-decode! file-image
@@ -277,7 +280,7 @@
                                 (:err error) (js/console.error |Failed-to-decode-image error)
                               , &unit
                           set! (.-onerror reader)
-                            fn (e) (js/console.error "|Failed to load image" e)
+                            fn (e) (js/console.error "|Failed to load image" e) &unit
                           .!readAsDataURL reader file
                       , &unit
                 if (:show-help? store)
@@ -292,14 +295,14 @@
                 files $ ffi/expect-object |event.target.files $ ffi/object-field |event.target target |files
               ffi/expect-object |event.target.files.0 $ ffi/object-field |event.target.files files |0
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> JsObject) (:features :js-ffi)
+          :schema $ quote $ Fn respo.dom/DomEvent (-> JsObject) (:features :js-ffi)
         'ffi-event-result $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-event-result (event)
             let
                 target $ ffi/expect-object |event.target $ ffi/object-field |event event |target
               ffi/expect-string |event.target.result $ ffi/object-field |event.target target |result
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> String) (:features :js-ffi)
+          :schema $ quote $ Fn JsObject (-> String) (:features :js-ffi)
         'inline-file $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defmacro inline-file (path)
             read-file $ str path
@@ -402,7 +405,7 @@
             respo/render-with! mount-target
               fn () $ comp-navbar @*store
               fn (op)
-                hint-fn $ Fn app.schema/UiOp $ -> Unit
+                hint-fn $ Fn schema/UiOp $ -> Unit
                 dispatch! op
             render! (comp-container @*store) app.store/dispatch-phlox! $ {}
           :examples $ []
