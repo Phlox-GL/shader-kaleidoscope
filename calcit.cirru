@@ -383,7 +383,7 @@
             when mobile? (render-control!) (start-control-loop! 8 on-control-event)
             println "||App Started"
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def mount-target (detect-mount-target)
           :examples $ []
@@ -399,7 +399,7 @@
               hud! |error build-errors
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit)
+          :schema $ quote $ Fn (-> Unit) (:features :io :state)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             respo/render-with! mount-target
@@ -409,7 +409,7 @@
                 dispatch! op
             render! (comp-container @*store) app.store/dispatch-phlox! $ {}
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require (|pixi.js :as PIXI)
@@ -493,7 +493,7 @@
             reset! *store $ updater @*store op
             , &unit
           :examples $ []
-          :schema $ quote $ Fn schema/Op (-> Unit)
+          :schema $ quote $ Fn schema/Op (-> Unit) (:features :state)
         'dispatch-phlox! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch-phlox! (raw)
             let
@@ -511,7 +511,7 @@
                   _ $ do (eprintln "|Unknown rendering operation" raw) &unit
             , &unit
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> Unit) (:open :reflect)
+          :schema $ quote $ Fn AnyEnum (-> Unit) (:features :io :state) (:open :reflect)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.store
           :require
