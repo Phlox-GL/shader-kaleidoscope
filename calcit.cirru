@@ -497,7 +497,7 @@
         'dispatch-phlox! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch-phlox! (raw)
             let
-                kind $ enum-definition raw
+                kind $ if (enum? raw) (enum-definition raw) None
               cond
                   = kind $ Some app.schema/SketchOp
                   dispatch! $ decode-map-as raw 'app.schema/SketchOp
@@ -511,7 +511,7 @@
                   _ $ do (eprintln "|Unknown rendering operation" raw) &unit
             , &unit
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> Unit) (:features :io :state) (:open :reflect)
+          :schema $ quote $ Fn Input (-> Unit) (:generics Input) (:features :io :state)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.store
           :require
