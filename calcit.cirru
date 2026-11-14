@@ -17,7 +17,7 @@
               comp-kaleidoscope
                 decode-map-as
                   >> (:controls store) :kaleidoscope
-                  Map Tag Dynamic
+                  Map respo.schema/CoordKey app.schema/RenderControlNode
                 :sketch store
           :examples $ []
           :schema $ quote $ Fn app.schema/Store (-> phlox.schema/PhloxElement)
@@ -190,7 +190,7 @@
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :shift position
                         , &unit
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) app.schema/KaleidoscopeState (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map respo.schema/CoordKey app.schema/RenderControlNode) app.schema/KaleidoscopeState (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'create-file-image $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn create-file-image () (browser/image-create)
           :examples $ []
@@ -444,6 +444,10 @@
           :code $ quote $ defunion Op SketchOp UiOp
           :examples $ []
           :schema $ quote UnionDef
+        'RenderControlNode $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion RenderControlNode Bool Number (List respo.schema/CoordKey) (Map respo.schema/CoordKey app.schema/ControlNode)
+          :examples $ []
+          :schema $ quote UnionDef
         'SketchOp $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum SketchOp (:set-sketch app.schema/KaleidoscopeState)
           :examples $ []
@@ -539,29 +543,43 @@
                       Map respo.schema/CoordKey app.schema/ControlNode
           :examples $ []
           :schema $ quote $ Fn app.schema/Store app.schema/Op (-> app.schema/Store)
-          :tests $ [] $ %{} 'TestEntry (:name |routes-controls-and-help)
-            :code $ quote $ let
-                initial app.schema/store
-                changed $ updater initial $ app.schema/SketchOp :set-sketch (&struct:assoc app.schema/initial-sketch :scale 0.9)
-                controls $ updater changed $ app.schema/UiOp :states ([] :kaleidoscope)
-                  {} $ :scale 0.9
-                nested $ updater controls $ app.schema/UiOp :states ([] :kaleidoscope :spin :move)
-                  {} (:dragging? true)
-                    :x0 $ [] 10 20
-              assert= 0.9 $ :scale $ :sketch nested
-              assert=
-                {} $ :kaleidoscope $ {}
-                  :data $ {} $ :scale 0.9
-                  :spin $ {} $ :move
-                    {} $ :data $ {} (:dragging? true)
+          :tests $ []
+            %{} 'TestEntry (:name |routes-controls-and-help)
+              :code $ quote $ let
+                  initial app.schema/store
+                  changed $ updater initial $ app.schema/SketchOp :set-sketch (&struct:assoc app.schema/initial-sketch :scale 0.9)
+                  controls $ updater changed $ app.schema/UiOp :states ([] :kaleidoscope)
+                    {} $ :scale 0.9
+                  nested $ updater controls $ app.schema/UiOp :states ([] :kaleidoscope :spin :move)
+                    {} (:dragging? true)
                       :x0 $ [] 10 20
-                :controls nested
-              assert= 0.9 $ :scale $ :sketch changed
-              assert=
-                {} $ :kaleidoscope $ {}
-                  :data $ {} $ :scale 0.9
-                :controls controls
-              assert= true $ :show-help? $ updater changed (app.schema/UiOp :toggle-help)
-              assert= 1 $ :n $ updater changed (app.schema/UiOp :touch)
+                assert= 0.9 $ :scale $ :sketch nested
+                assert=
+                  {} $ :kaleidoscope $ {}
+                    :data $ {} $ :scale 0.9
+                    :spin $ {} $ :move
+                      {} $ :data $ {} (:dragging? true)
+                        :x0 $ [] 10 20
+                  :controls nested
+                assert= 0.9 $ :scale $ :sketch changed
+                assert=
+                  {} $ :kaleidoscope $ {}
+                    :data $ {} $ :scale 0.9
+                  :controls controls
+                assert= true $ :show-help? $ updater changed (app.schema/UiOp :toggle-help)
+                assert= 1 $ :n $ updater changed (app.schema/UiOp :touch)
+            %{} 'TestEntry (:name |phlox-render-cursor)
+              :code $ quote $ assert=
+                {}
+                  :cursor $ [] :kaleidoscope
+                  :radius $ {} $ :data
+                    {} $ :dragging? true
+                decode-map-as
+                  phlox.core/>>
+                    {} $ :kaleidoscope $ {}
+                      :radius $ {} $ :data
+                        {} $ :dragging? true
+                    , :kaleidoscope
+                  Map respo.schema/CoordKey app.schema/RenderControlNode
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
