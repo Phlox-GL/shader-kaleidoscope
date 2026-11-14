@@ -17,7 +17,7 @@
               comp-kaleidoscope
                 decode-map-as
                   >> (:controls store) :kaleidoscope
-                  Map Tag Dynamic
+                  Map respo.schema/CoordKey app.schema/ControlNode
                 :sketch store
           :examples $ []
           :schema $ quote $ Fn app.schema/Store (-> phlox.schema/PhloxElement)
@@ -190,7 +190,7 @@
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :shift position
                         , &unit
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) app.schema/KaleidoscopeState (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map respo.schema/CoordKey app.schema/ControlNode) app.schema/KaleidoscopeState (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'create-file-image $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn create-file-image () (browser/image-create)
           :examples $ []
