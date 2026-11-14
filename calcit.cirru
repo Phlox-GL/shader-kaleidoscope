@@ -142,7 +142,7 @@
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :skip value
                         , &unit
                   comp-spin-slider (>> states :spin)
-                    {} (:unit 1) (:min 0) (:max nil) (:fraction 1) (:label "|Texture spin")
+                    {} (:unit 1) (:min 0) (:fraction 1) (:label "|Texture spin")
                       :position $ :spin-position state
                       ; :fill $ hslx 50 90 70
                       ; :color $ hslx 200 90 30
@@ -160,7 +160,7 @@
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :spin-position pos
                         , &unit
                   comp-spin-slider (>> states :shape-spin)
-                    {} (:unit 0.5) (:min 0) (:max nil) (:fraction 1) (:label "|Shape spin")
+                    {} (:unit 0.5) (:min 0) (:fraction 1) (:label "|Shape spin")
                       :position $ :shape-spin-position state
                       ; :fill $ hslx 250 90 80
                       ; :color $ hslx 200 90 30
