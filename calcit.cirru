@@ -20,7 +20,7 @@
                   Map respo.schema/CoordKey app.schema/RenderControlNode
                 :sketch store
           :examples $ []
-          :schema $ quote $ Fn app.schema/Store (-> phlox.schema/PhloxElement)
+          :schema $ quote $ Fn app.schema/Store (-> phlox.schema/PhloxElement) (:features :state)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require
@@ -190,7 +190,7 @@
                         d! $ app.schema/SketchOp :set-sketch $ &struct:assoc state :shift position
                         , &unit
           :examples $ []
-          :schema $ quote $ Fn (Map respo.schema/CoordKey app.schema/RenderControlNode) app.schema/KaleidoscopeState (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map respo.schema/CoordKey app.schema/RenderControlNode) app.schema/KaleidoscopeState (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
         'create-file-image $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn create-file-image () (browser/image-create)
           :examples $ []
@@ -239,7 +239,7 @@
                 :on-click $ fn (e d!)
                   d! $ app.schema/UiOp :toggle-help
           :examples $ []
-          :schema $ quote $ Fn (-> respo.schema/Component)
+          :schema $ quote $ Fn (-> respo.schema/Component) (:features :state)
         'comp-navbar $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-navbar (store)
             div
@@ -287,7 +287,7 @@
                   Some $ comp-help-menu
                   , None
           :examples $ []
-          :schema $ quote $ Fn app.schema/Store (-> respo.schema/Component) (:features :js-ffi)
+          :schema $ quote $ Fn app.schema/Store (-> respo.schema/Component) (:features :js-ffi :state)
         'ffi-event-file $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-event-file (event)
             let
