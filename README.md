@@ -2,7 +2,7 @@
 
 Demo https://r.tiye.me/Phlox-GL/shader-kaleidoscope/
 
-使用配对的正式 Calcit 和 `@calcit/procs` 0.45.0，以及 Phlox 0.12.1、Respo 0.19.17。
+使用配对的正式 Calcit 和 `@calcit/procs` 0.45.1，以及 Phlox 0.12.2、Respo 0.19.18。
 现有拖动手势、着色器和参数公式保持一致；Phlox 布尔属性现受检为 Bool。帮助菜单和贴图载入后的重绘沿用原流程。
 绘图参数存放在具名状态中，着色器更新与界面操作通过 union 分开。
 Phlox 控件的内部游标仍通过现有的开放 Map 边界接收。
