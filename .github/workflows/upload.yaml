@@ -31,10 +31,10 @@ jobs:
         corepack prepare yarn@4.18.0 --activate
         yarn --version
     - name: Set up Calcit and Caps
-      uses: calcit-lang/setup-calcit@v1.5.1
+      uses: calcit-lang/setup-calcit@v1.5.2
       with:
         tools: calcit,caps
-        caps-version: "0.1.1"
+        caps-version: "0.1.2"
         deps-file: deps.cirru
     - name: Resolve immutable dependencies
       run: |
